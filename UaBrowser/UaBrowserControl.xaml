@@ -1,0 +1,520 @@
+﻿<UserControl x:Class="Workstation.UaBrowser.UaBrowserControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:data="clr-namespace:Workstation.UaBrowser.Data"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+             xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
+             xmlns:vm="clr-namespace:Workstation.UaBrowser.ViewModels"
+             xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
+             d:DataContext="{d:DesignInstance Type={x:Type vm:UaBrowserViewModel}}"
+             d:DesignHeight="300"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <data:AccessLevelToStringConverter x:Key="AccessLevelToStringConverter" />
+        <data:TypeToStringConverter x:Key="TypeToStringConverter" />
+        <PathGeometry x:Key="RefreshGeometry"
+                      Figures="M58.78125,5.15583038330078L83.953125,30.3277053833008 58.828125,55.4995803833008 58.828125,37.3120803833008 52.7695274353027,37.8745803833008 46.875,39.5620803833008 41.34375,42.409740447998 36.375,46.4527053833008 32.19140625,51.491771697998 29.203125,57.1402053833008 27.4101543426514,63.1636428833008 26.8125,69.3277053833008 27.3808574676514,75.3921585083008 29.0859375,81.3042678833008 31.951171875,86.8530960083008 36,91.8277053833008 41.0390625,96.0230178833008 46.6640625,99.0230178833008 52.6640625,100.804267883301 58.828125,101.390205383301 64.880859375,100.821846008301 70.7578125,99.1167678833008 76.283203125,96.2515335083008 81.28125,92.2027053833008 85.453125,87.1402053833008 88.4296875,81.5152053833008 90.234375,75.5152053833008 90.84375,69.3277053833008 90.1875,62.9058303833008 104.109375,62.9058303833008 104.53125,69.2808303833008 104.320304870605,73.7222366333008 103.6875,78.1402053833008 102.626945495605,82.4937210083008 101.1328125,86.7417678833008 99.2109298706055,90.8491897583008 96.8671875,94.7808303833008 94.095703125,98.5073928833008 90.890625,101.999580383301 87.4453125,105.075752258301 83.765625,107.741767883301 79.892578125,109.997627258301 75.8671875,111.843330383301 71.71875,113.278877258301 67.4765625,114.304267883301 63.169921875,114.919502258301 58.828125,115.124580383301 54.3925743103027,114.913642883301 49.9921875,114.280830383301 45.66796875,113.220283508301 41.4609375,111.726142883301 37.388671875,109.804267883301 33.46875,107.460517883301 29.7421855926514,104.689033508301 26.25,101.483955383301 23.173828125,98.0327835083008 20.5078125,94.3355178833008 18.24609375,90.4448928833008 16.3828125,86.4136428833008 14.9296865463257,82.2534866333008 13.8984384536743,77.9761428833008 13.283203125,73.6343460083008 13.0781259536743,69.2808303833008 13.2890615463257,64.8452835083008 13.9218740463257,60.4448928833008 14.9824209213257,56.1148147583008 16.4765625,51.8902053833008 18.3984375,47.800365447998 20.7421875,43.8745803833008 23.513671875,40.1480178833008 26.71875,36.6558303833008 30.1699199676514,33.5855178833008 33.8671875,30.9370803833008 37.751953125,28.7046585083008 41.765625,26.8823928833008 45.90234375,25.4644241333008 50.15625,24.4448928833008 54.4687461853027,23.8296585083008 58.78125,23.6245803833008 58.78125,5.15583038330078z"
+                      FillRule="Nonzero" />
+        <PathGeometry x:Key="StopGeometry"
+                      Figures="M31.921875,26.3902053833008L58.734375,53.2027053833008 85.59375,26.3902053833008 96.984375,37.7339553833008 70.125,64.5933303833008 96.984375,91.4527053833008 85.59375,102.796455383301 58.734375,75.9839553833008 31.921875,102.796455383301 20.578125,91.4058303833008 47.390625,64.5933303833008 20.578125,37.7808303833008 31.921875,26.3902053833008z"
+                      FillRule="Nonzero" />
+        <PathGeometry x:Key="CubeGeometry"
+                      Figures="M3.8050001,13.586C3.8050001,17.828121 3.8050001,31.436069 3.8050001,33.37743 5.5224033,34.137619 15.860543,38.722233 19.583,40.368 19.583,36.125881 19.583,22.518234 19.583,20.57807L19.027021,20.331974C16.301926,19.124998,7.241117,15.106772,3.8050001,13.586z M39.321999,13.507L32.884438,16.363745C28.811333,18.171171,24.446724,20.1087,23.387999,20.577406L23.387999,40.368C27.122492,38.713177 37.601955,34.062008 39.321999,33.298996 39.321999,31.358868 39.321999,17.753164 39.321999,13.507z M21.641769,3.983C20.511574,4.4842062 11.387918,8.532197 6.5950008,10.658579 10.69262,12.47623 17.893085,15.666244 20.559774,16.848412L21.48427,17.26 23.874758,16.198729C27.186043,14.728768 33.015415,12.140239 36.530998,10.580482 31.76022,8.4684782 22.769363,4.4829865 21.641769,3.983z M21.640463,0C21.903498,0,22.166546,0.054686519,22.411345,0.16405954L41.994507,8.8409042C42.153305,8.9346523 42.209305,8.9502821 42.262806,8.984211 42.428101,9.1221485 42.480103,9.1638985 42.528404,9.2107773 42.606503,9.2837658 42.674202,9.3631144 42.738003,9.4478331 42.775703,9.4986115 42.817402,9.5506105 42.847301,9.6053 42.907303,9.7029476 42.948898,9.8057375 42.990597,9.9138842 43.011398,9.9659338 43.036098,10.015433 43.054398,10.070132 43.099998,10.234228 43.125999,10.406026 43.125999,10.580623L43.125999,34.535793C43.125999,35.288479,42.685902,35.970768,41.997105,36.27396L22.256445,45.033104C22.100145,45.089005 22.023346,45.108604 21.940048,45.126904 21.868347,45.144905 21.796848,45.164505 21.719849,45.172302 21.641748,45.183998 21.564949,45.183998 21.485649,45.183998 21.408651,45.183998 21.329351,45.183998 21.251152,45.172302 21.176952,45.164505 21.105352,45.144905 21.029854,45.126904 20.950354,45.108604 20.873554,45.089005 20.798056,45.055103L1.1314619,36.35606C0.4426849,36.050163,1.0090652E-08,35.366581,0,34.615391L0,10.658721C1.0090652E-08,10.484224 0.02600083,10.315027 0.075499828,10.148231 0.088561389,10.093532 0.11456222,10.044032 0.13549706,9.992033 0.17455978,9.8853254 0.21884049,9.7810774 0.27734194,9.684639 0.31255884,9.6299496 0.35284154,9.5779505 0.39190427,9.5244923 0.45187084,9.4424524 0.51949735,9.3631144 0.59508891,9.2901154 0.64840246,9.243247 0.69671113,9.1990576 0.7538705,9.1587687 0.91536863,9.0310907 0.9727102,9.0142403 1.024833,8.984211L20.869656,0.16405954C21.114403,0.054686519,21.377426,0,21.640463,0z"
+                      FillRule="Nonzero" />
+        <PathGeometry x:Key="WrenchGeometry"
+                      Figures="M25.59375,95.9995803833008L23.87109375,96.3277053833008 22.359375,97.3120803833008 21.33984375,98.8003616333008 21,100.546455383301 21.3515625,102.280830383301 22.359375,103.780830383301 23.90625,104.812080383301 25.640625,105.140205383301 27.3749980926514,104.812080383301 28.828125,103.827705383301 29.8125,102.327705383301 30.140625,100.593330383301 29.8125,98.8589553833008 28.828125,97.3589553833008 27.3398418426514,96.3394241333008 25.59375,95.9995803833008z M85.359375,19.0777053833008L87.9140625,19.2886428833008 90.09375,19.7339553833008 92.203125,20.3902053833008 92.25,21.5152053833008 78.46875,34.9214553833008 81.09375,46.4527053833008 92.71875,48.7495803833008 106.40625,35.3902053833008 107.4375,35.2495803833008 108.28125,37.5464553833008 108.8671875,39.8667678833008 109.125,42.4214553833008 108.644523620605,47.132396697998 107.203125,51.5152053833008 104.882804870605,55.4702835083008 101.765625,58.8980178833008 97.8925704956055,61.7339553833008 93.3046875,63.9136428833008 88.083984375,65.3257522583008 82.3125,65.8589553833008 80.203125,65.7417678833008 78.046875,65.2495803833008 32.765625,109.405830383301 30.8906230926514,110.976142883301 29.015625,112.030830383301 27.1406230926514,112.628486633301 25.265625,112.827705383301 23.103515625,112.581611633301 21.0234375,111.843330383301 17.25,109.171455383301 14.203125,105.163642883301 13.2890615463257,102.884346008301 12.984375,100.499580383301 13.2187490463257,98.7066116333008 13.9218740463257,96.8902053833008 16.359375,93.3745803833008 61.265625,49.2652053833008 61.265625,42.4683303833008 61.7343711853027,37.7456741333008 63.140625,33.3277053833008 65.361328125,29.3374710083008 68.2734375,25.8980178833008 71.818359375,23.0679397583008 75.9375,20.9058303833008 80.49609375,19.5347366333008 85.359375,19.0777053833008z"
+                      FillRule="Nonzero" />
+        <PathGeometry x:Key="RemoteGeometry"
+                      Figures="M23.484375,43.9214553833008L59.484375,79.6870803833008 23.484375,115.499580383301 13.078125,105.187080383301 38.671875,79.6870803833008 13.078125,54.2339553833008 23.484375,43.9214553833008z M92.53125,16.4527053833008L102.9375,26.7652053833008 77.296875,52.2652053833008 102.9375,77.7183303833008 92.53125,88.0308303833008 56.53125,52.2652053833008 92.53125,16.4527053833008z"
+                      FillRule="Nonzero" />
+        <Style x:Key="{x:Type TreeView}" TargetType="{x:Type TreeView}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}" />
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBackgroundBrushKey}}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowBorderBrushKey}}" />
+            <Setter Property="Padding" Value="1" />
+        </Style>
+        <PathGeometry x:Key="ExpandGeometry" Figures="M0,0 L0,6 L6,0 z" />
+        <Style x:Key="ExpandButton" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Focusable" Value="False" />
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border Width="16"
+                                Height="16"
+                                Background="#00FFFFFF"
+                                Padding="5,5,5,5">
+                            <Path x:Name="ExpandPath"
+                                  Data="{StaticResource ExpandGeometry}"
+                                  Fill="{DynamicResource {x:Static vs:TreeViewColors.GlyphBrushKey}}"
+                                  Stroke="{DynamicResource {x:Static vs:TreeViewColors.GlyphBrushKey}}">
+                                <Path.RenderTransform>
+                                    <RotateTransform Angle="135" CenterX="3" CenterY="3" />
+                                </Path.RenderTransform>
+                            </Path>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="ExpandPath" Property="RenderTransform">
+                                    <Setter.Value>
+                                        <RotateTransform Angle="180" CenterX="3" CenterY="3" />
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ExpandPath" Property="Stroke" Value="{DynamicResource {x:Static vs:TreeViewColors.GlyphMouseOverBrushKey}}" />
+                                <Setter TargetName="ExpandPath" Property="Fill" Value="{DynamicResource {x:Static vs:TreeViewColors.GlyphMouseOverBrushKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TreeViewItemFocusVisualStyle">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="{x:Type TreeViewItem}" TargetType="{x:Type TreeViewItem}">
+            <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+            <Setter Property="IsSelected" Value="{Binding IsSelected, Mode=TwoWay}" />
+            <Setter Property="Background" Value="#00FFFFFF" />
+            <Setter Property="Padding" Value="1,0,0,0" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ToolWindowTextBrushKey}}" />
+            <Setter Property="FocusVisualStyle" Value="{StaticResource TreeViewItemFocusVisualStyle}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" MinWidth="19" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                            </Grid.RowDefinitions>
+                            <ToggleButton x:Name="Expander"
+                                          ClickMode="Press"
+                                          IsChecked="{Binding IsExpanded,
+                                                              RelativeSource={RelativeSource TemplatedParent}}"
+                                          Style="{StaticResource ExpandButton}" />
+                            <Border x:Name="Bd"
+                                    Grid.Column="1"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    SnapsToDevicePixels="True">
+                                <ContentPresenter x:Name="PART_Header"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  ContentSource="Header"
+                                                  SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Border>
+                            <ItemsPresenter x:Name="ItemsHost"
+                                            Grid.Row="1"
+                                            Grid.Column="1"
+                                            Grid.ColumnSpan="2" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsExpanded" Value="False">
+                                <Setter TargetName="ItemsHost" Property="Visibility" Value="Collapsed" />
+                            </Trigger>
+                            <Trigger Property="HasItems" Value="False">
+                                <Setter TargetName="Expander" Property="Visibility" Value="Hidden" />
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static vs:TreeViewColors.SelectedItemActiveBrushKey}}" />
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:TreeViewColors.SelectedItemActiveTextBrushKey}}" />
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="True" />
+                                    <Condition Property="IsSelectionActive" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource {x:Static vs:TreeViewColors.SelectedItemInactiveBrushKey}}" />
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:TreeViewColors.SelectedItemInactiveTextBrushKey}}" />
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="VirtualizingPanel.IsVirtualizing" Value="True">
+                    <Setter Property="ItemsPanel">
+                        <Setter.Value>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel />
+                            </ItemsPanelTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="CommandBar" TargetType="{x:Type Border}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarGradientBrushKey}}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.CommandBarBorderBrushKey}}" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="1" />
+            <Setter Property="FocusManager.IsFocusScope" Value="True" />
+            <Setter Property="KeyboardNavigation.TabIndex" Value="1" />
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="Cycle" />
+        </Style>
+        <Style x:Key="CommandBarLabel" TargetType="{x:Type Label}">
+            <Setter Property="TextElement.Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}" />
+        </Style>
+        <Style x:Key="CommandBarButton"
+               BasedOn="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
+               TargetType="{x:Type Button}">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Padding" Value="4" />
+        </Style>
+        <Style x:Key="ComboBoxEditableTextBox" TargetType="{x:Type TextBox}">
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="AllowDrop" Value="true" />
+            <Setter Property="MinWidth" Value="0" />
+            <Setter Property="MinHeight" Value="0" />
+            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst" />
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+            <Setter Property="CaretBrush" Value="{Binding Foreground, RelativeSource={RelativeSource Self}}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <ScrollViewer x:Name="PART_ContentHost"
+                                      Background="Transparent"
+                                      Focusable="false"
+                                      HorizontalScrollBarVisibility="Hidden"
+                                      VerticalScrollBarVisibility="Hidden" />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="UaBrowserJournalEntry" TargetType="{x:Type MenuItem}">
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="Header" Value="{Binding}" />
+            <Setter Property="Command" Value="{Binding DataContext.RefreshCommand, RelativeSource={RelativeSource AncestorType=Menu}}" />
+            <Setter Property="CommandParameter" Value="{Binding}" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Grid Name="Panel"
+                              Background="Transparent"
+                              SnapsToDevicePixels="true">
+                            <ContentPresenter Margin="24,5,21,5" ContentSource="Header" />
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="true">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}" />
+                                <Setter TargetName="Panel" Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="UaBrowserNavMenuItem" TargetType="{x:Type MenuItem}">
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="ScrollViewer.PanningMode" Value="Both" />
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}" />
+            <Setter Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxBackgroundBrushKey}}" />
+            <Setter Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxBorderBrushKey}}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type MenuItem}">
+                        <Grid SnapsToDevicePixels="true">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Popup x:Name="PART_Popup"
+                                   Grid.ColumnSpan="2"
+                                   AllowsTransparency="true"
+                                   Focusable="false"
+                                   IsOpen="{Binding Path=(MenuItem.IsSubmenuOpen),
+                                                    RelativeSource={RelativeSource TemplatedParent}}"
+                                   Placement="Bottom"
+                                   PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}"
+                                   VerticalOffset="2">
+                                <theme:SystemDropShadowChrome Name="Shdw" Color="Transparent">
+                                    <Border Name="SubMenuBorder"
+                                            Background="{TemplateBinding Background}"
+                                            BorderBrush="{DynamicResource {x:Static vs:EnvironmentColors.DropDownBorderBrushKey}}"
+                                            BorderThickness="1">
+                                        <ScrollViewer Name="SubMenuScrollViewer" Style="{DynamicResource {ComponentResourceKey TypeInTargetAssembly={x:Type FrameworkElement}, ResourceId=MenuScrollViewer}}">
+                                            <Grid RenderOptions.ClearTypeHint="Enabled">
+                                                <Canvas Width="0"
+                                                        Height="0"
+                                                        HorizontalAlignment="Left"
+                                                        VerticalAlignment="Top">
+                                                    <Rectangle Name="OpaqueRect"
+                                                               Width="{Binding ElementName=SubMenuBorder,
+                                                                               Path=ActualWidth}"
+                                                               Height="{Binding ElementName=SubMenuBorder,
+                                                                                Path=ActualHeight}"
+                                                               Fill="{Binding ElementName=SubMenuBorder,
+                                                                              Path=Background}" />
+                                                </Canvas>
+                                                <ItemsPresenter Name="ItemsPresenter"
+                                                                Margin="2"
+                                                                KeyboardNavigation.DirectionalNavigation="Cycle"
+                                                                KeyboardNavigation.TabNavigation="Cycle" />
+                                            </Grid>
+                                        </ScrollViewer>
+                                    </Border>
+                                </theme:SystemDropShadowChrome>
+                            </Popup>
+                            <Border x:Name="Border"
+                                    Grid.ColumnSpan="2"
+                                    Background="{TemplateBinding Background}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="{TemplateBinding BorderThickness}" />
+                            <TextBox x:Name="PART_EditableTextBox"
+                                     MinHeight="18"
+                                     Margin="1,1,0,1"
+                                     VerticalAlignment="Center"
+                                     Padding="{TemplateBinding Padding}"
+                                     Style="{StaticResource ComboBoxEditableTextBox}"
+                                     Text="{Binding Header, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}, UpdateSourceTrigger=PropertyChanged}">
+                                <TextBox.InputBindings>
+                                    <KeyBinding Command="{Binding DataContext.RefreshCommand,
+                                                                  RelativeSource={RelativeSource AncestorType=Menu}}"
+                                                CommandParameter="{Binding Text,
+                                                                           ElementName=PART_EditableTextBox}"
+                                                Gesture="Enter" />
+                                </TextBox.InputBindings>
+                            </TextBox>
+                            <Border x:Name="DropDownButton"
+                                    Grid.Column="1"
+                                    Width="18"
+                                    Background="Transparent"
+                                    BorderBrush="Transparent"
+                                    BorderThickness="1">
+                                <Path x:Name="ArrowDownPath"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Data="M 2.5 0 L 8.5 0 L 5.5 3 Z"
+                                      Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxGlyphBrushKey}}" />
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsHighlighted" Value="true">
+                                <Setter TargetName="Border" Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxMouseOverBorderBrushKey}}" />
+                                <Setter TargetName="DropDownButton" Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxMouseOverBorderBrushKey}}" />
+                                <Setter TargetName="DropDownButton" Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxButtonMouseOverBackgroundBrushKey}}" />
+                                <Setter TargetName="ArrowDownPath" Property="Fill" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxMouseOverGlyphBrushKey}}" />
+                            </Trigger>
+                            <Trigger Property="IsSubmenuOpen" Value="true">
+                                <Setter TargetName="DropDownButton" Property="BorderBrush" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxMouseDownBorderBrushKey}}" />
+                                <Setter TargetName="DropDownButton" Property="Background" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxButtonMouseDownBackgroundBrushKey}}" />
+                                <Setter TargetName="ArrowDownPath" Property="Fill" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxMouseDownGlyphBrushKey}}" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter TargetName="ArrowDownPath" Property="Fill" Value="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxDisabledGlyphBrushKey}}" />
+                            </Trigger>
+                            <Trigger SourceName="PART_Popup" Property="Popup.HasDropShadow" Value="true">
+                                <Setter TargetName="Shdw" Property="Margin" Value="0,0,5,5" />
+                                <Setter TargetName="Shdw" Property="SnapsToDevicePixels" Value="true" />
+                                <Setter TargetName="Shdw" Property="Color" Value="#71000000" />
+                            </Trigger>
+                            <Trigger SourceName="SubMenuScrollViewer" Property="ScrollViewer.CanContentScroll" Value="false">
+                                <Setter TargetName="OpaqueRect" Property="Canvas.Top" Value="{Binding ElementName=SubMenuScrollViewer, Path=VerticalOffset}" />
+                                <Setter TargetName="OpaqueRect" Property="Canvas.Left" Value="{Binding ElementName=SubMenuScrollViewer, Path=HorizontalOffset}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="UaBrowserNavMenu" TargetType="{x:Type Menu}">
+            <Setter Property="ItemsPanel">
+                <Setter.Value>
+                    <ItemsPanelTemplate>
+                        <DockPanel />
+                    </ItemsPanelTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="OverridesDefaultStyle" Value="true" />
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None" />
+            <Setter Property="IsMainMenu" Value="false" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Menu}">
+                        <ItemsPresenter />
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <HierarchicalDataTemplate DataType="{x:Type vm:ReferenceDescriptionViewModel}" ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path x:Name="icon"
+                      Width="14"
+                      Height="14"
+                      Margin="2"
+                      VerticalAlignment="Center"
+                      Data="{StaticResource CubeGeometry}"
+                      Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
+                      Stretch="Uniform" />
+                <TextBlock x:Name="folderContent"
+                           Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"><Run FontWeight="Bold" Text="{Binding DisplayName, Mode=OneWay}" />
+                </TextBlock>
+                <TextBlock x:Name="variableContent"
+                           Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"
+                           Visibility="Hidden"><Run Text="{Binding DataType, Converter={StaticResource TypeToStringConverter}, Mode=OneWay}" /><Run Text=" " /><Run FontWeight="Bold" Text="{Binding DisplayName, Mode=OneWay}" /><Run Text=" " /><Run Text="{Binding AccessLevel, Converter={StaticResource AccessLevelToStringConverter}, Mode=OneWay}" />
+                </TextBlock>
+                <TextBlock x:Name="methodContent"
+                           Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"
+                           Visibility="Hidden"><Run Text="Task&lt;object[]&gt; " /><Run FontWeight="Bold" Text="{Binding DisplayName, Mode=OneWay}" /><Run Text="(object[])" />
+                </TextBlock>
+                <TextBlock x:Name="notifierContent"
+                           Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"
+                           Visibility="Hidden"><Run Text="BaseEvent " /><Run FontWeight="Bold" Text="{Binding DisplayName, Mode=OneWay}" /><Run Text=" { get; }" />
+                </TextBlock>
+            </Grid>
+            <HierarchicalDataTemplate.Triggers>
+                <DataTrigger Binding="{Binding IsVariable}" Value="True">
+                    <Setter TargetName="icon" Property="Data" Value="{StaticResource WrenchGeometry}" />
+                    <Setter TargetName="variableContent" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="folderContent" Property="Visibility" Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsMethod}" Value="True">
+                    <Setter TargetName="icon" Property="Data" Value="{StaticResource RemoteGeometry}" />
+                    <Setter TargetName="methodContent" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="folderContent" Property="Visibility" Value="Hidden" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding IsEventNotifier}" Value="True">
+                    <Setter TargetName="notifierContent" Property="Visibility" Value="Visible" />
+                    <Setter TargetName="folderContent" Property="Visibility" Value="Hidden" />
+                </DataTrigger>
+            </HierarchicalDataTemplate.Triggers>
+        </HierarchicalDataTemplate>
+    </UserControl.Resources>
+    <UserControl.InputBindings>
+        <KeyBinding Command="{Binding BrowseStopCommand}" Gesture="Esc" />
+    </UserControl.InputBindings>
+    <Grid x:Name="MainGrid" Tag="{Binding IsLoading, NotifyOnTargetUpdated=True}" TargetUpdated="MainGrid_TargetUpdated">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="LoadingStates">
+                <VisualState x:Name="Ready" />
+                <VisualState x:Name="IsLoading">
+                    <Storyboard>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="RefreshButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Hidden}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="BrowseStopButton" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                        </ObjectAnimationUsingKeyFrames>
+                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ProgressBar" Storyboard.TargetProperty="(UIElement.Visibility)">
+                            <DiscreteObjectKeyFrame KeyTime="0" Value="{x:Static Visibility.Visible}" />
+                        </ObjectAnimationUsingKeyFrames>
+                    </Storyboard>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Style="{DynamicResource CommandBar}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Label Style="{DynamicResource CommandBarLabel}" ToolTip="Server endpoint, e.g. opc.tcp://host:port">Url:</Label>
+                <Menu x:Name="NavMenu"
+                      Grid.Column="1"
+                      Height="24"
+                      Margin="1,0"
+                      IsTabStop="False"
+                      Style="{StaticResource UaBrowserNavMenu}">
+                    <MenuItem x:Name="NavMenuItem"
+                              Header="{Binding EndpointUrl,
+                                               Mode=TwoWay}"
+                              ItemContainerStyle="{StaticResource UaBrowserJournalEntry}"
+                              ItemsSource="{Binding History}"
+                              Style="{StaticResource UaBrowserNavMenuItem}" />
+                </Menu>
+                <Button x:Name="BrowseStopButton"
+                        Grid.Column="2"
+                        Width="20"
+                        Height="24"
+                        Margin="1,0"
+                        Command="{Binding BrowseStopCommand}"
+                        Style="{DynamicResource CommandBarButton}"
+                        ToolTip="Stop"
+                        Visibility="Hidden">
+                    <Path Width="10"
+                          Height="10"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Data="{StaticResource StopGeometry}"
+                          Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
+                          Stretch="Uniform" />
+                </Button>
+                <Button x:Name="RefreshButton"
+                        Grid.Column="2"
+                        Width="20"
+                        Height="24"
+                        Margin="1,0"
+                        Command="{Binding RefreshCommand}"
+                        CommandParameter="{Binding Header,
+                                                   ElementName=NavMenuItem}"
+                        Style="{DynamicResource CommandBarButton}"
+                        ToolTip="Refresh">
+                    <Path Width="14"
+                          Height="14"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Data="{StaticResource RefreshGeometry}"
+                          Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
+                          Stretch="Uniform" />
+                </Button>
+
+            </Grid>
+        </Border>
+        <TreeView x:Name="NamespaceTree"
+                  Grid.Row="1"
+                  ItemsSource="{Binding NamespaceItems}"
+                  PreviewMouseLeftButtonDown="OnPreviewMouseLeftButtonDown"
+                  PreviewMouseMove="OnPreviewMouseMove"
+                  VirtualizingStackPanel.IsVirtualizing="True"
+                  VirtualizingStackPanel.VirtualizationMode="Recycling" />
+        <ProgressBar x:Name="ProgressBar"
+                     Grid.Row="1"
+                     VerticalAlignment="Top"
+                     IsIndeterminate="True"
+                     Visibility="Collapsed" />
+    </Grid>
+</UserControl>
