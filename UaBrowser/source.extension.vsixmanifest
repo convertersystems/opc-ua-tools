@@ -11,11 +11,11 @@ With this kit you can:
  * Drag and drop the variable, method, and event nodes onto your view model.
  * Add XAML bindings to connect your UI control properties to live data and events.
 </Description>
-    <MoreInfo>http://github.com/Workstation/UaBrowser</MoreInfo>
+    <MoreInfo>https://github.com/convertersystems/workstation-tools</MoreInfo>
     <License>LICENSE.txt</License>
     <Icon>Resources\Package.ico</Icon>
     <PreviewImage>hmi2.png</PreviewImage>
-    <Tags>uwp, wpf, opc, ua</Tags>
+    <Tags>opc, hmi</Tags>
   </Metadata>
   <Installation>
     <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0]" />
