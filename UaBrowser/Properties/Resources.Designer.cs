@@ -107,16 +107,15 @@ namespace Workstation.UaBrowser.Properties {
         ///   Looks up a localized string similar to     &apos;&apos;&apos; &lt;summary&gt;
         ///    &apos;&apos;&apos; Invokes the method $propertyName$
         ///    &apos;&apos;&apos; &lt;/summary&gt;
+        ///    &apos;&apos;&apos; &lt;param name=&quot;inArgs&quot;&gt;The input arguments.&lt;/param&gt;
+        ///    &apos;&apos;&apos; &lt;returns&gt;A &lt;see cref=&quot;Task&quot;/&gt; that returns the output arguments.&lt;/returns&gt;
         ///    Public Async Function $propertyName$(ByVal ParamArray inArgs() As Object) As Task(Of Object())
         ///
         ///        Dim response As CallResponse = Await Session.CallAsync(New CallRequest With
         ///            {
         ///               .MethodsToCall =
         ///                {
-        ///                    New CallMethodRequest With
-        ///                    {
-        ///                        .ObjectId = NodeId.Parse(&quot;$parentNodeId$&quot;),
-        ///                        .MethodId =  [rest of string was truncated]&quot;;.
+        ///                    New CallMetho [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MethodFormatBasic {
             get {
@@ -128,16 +127,15 @@ namespace Workstation.UaBrowser.Properties {
         ///   Looks up a localized string similar to         /// &lt;summary&gt;
         ///        /// Invokes the method $propertyName$.
         ///        /// &lt;/summary&gt;
+        ///        /// &lt;param name=&quot;inArgs&quot;&gt;The input arguments.&lt;/param&gt;
+        ///        /// &lt;returns&gt;A &lt;see cref=&quot;Task&quot;/&gt; that returns the output arguments.&lt;/returns&gt;
         ///        public async Task&lt;object[]&gt; $propertyName$(params object[] inArgs)
         ///        {
         ///            var response = await this.Session.CallAsync(new CallRequest
         ///            {
         ///               MethodsToCall = new[]
         ///                {
-        ///                    new CallMethodRequest
-        ///                    {
-        ///                        ObjectId = NodeId.Parse(&quot;$parentNodeId$&quot;),
-        ///                        MethodId = NodeId.Parse(&quot;$n [rest of string was truncated]&quot;;.
+        ///                    new CallMethod [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MethodFormatCSharp {
             get {
@@ -179,7 +177,8 @@ namespace Workstation.UaBrowser.Properties {
         ///            private set { this.SetProperty(ref this.$fieldName$, value); }
         ///        }
         ///
-        ///        private $dataType$ $fieldName$;.
+        ///        private $dataType$ $fieldName$;
+        ///.
         /// </summary>
         internal static string ReadOnlyValueFormatCSharp {
             get {

@@ -42,7 +42,7 @@ namespace Workstation.UaBrowser.ViewModels
         private ObservableCollection<ReferenceDescriptionViewModel> namespaceItems;
         private string readOnlyValueFormatBasic;
         private string readOnlyValueFormatCSharp;
-        private UaTcpSessionClient session;
+        private UaTcpSessionChannel session;
         private WritableSettingsStore store;
         private string valueFormatBasic;
         private string valueFormatCSharp;
@@ -493,7 +493,7 @@ namespace Workstation.UaBrowser.ViewModels
                                     this.localCertificate = this.localDescription.GetCertificate(createIfNotFound: true);
                                 }
 
-                                this.session = new UaTcpSessionClient(
+                                this.session = new UaTcpSessionChannel(
                                     this.localDescription,
                                     this.localCertificate,
                                     null,
