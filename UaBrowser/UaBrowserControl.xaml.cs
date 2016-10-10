@@ -95,5 +95,18 @@ namespace Workstation.UaBrowser
                 VisualStateManager.GoToElementState(grid, "Ready", true);
             }
         }
+
+        private void Refresh_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+        {
+            e.CanExecute = true;
+        }
+
+        private async void Refresh_Executed(object sender, ExecutedRoutedEventArgs e)
+        {
+            var vm = (UaBrowserViewModel)this.DataContext;
+            await vm.RefreshAsync(e.Parameter as string, this.UserNameBox.Text, this.PasswordBox.Password);
+
+        }
+
     }
 }

@@ -156,7 +156,7 @@
     ''' &lt;returns&gt;A &lt;see cref="Task"/&gt; that returns the output arguments.&lt;/returns&gt;
     Public Async Function $propertyName$(ByVal ParamArray inArgs() As Object) As Task(Of Object())
 
-        Dim response As CallResponse = Await Session.CallAsync(New CallRequest With
+        Dim response As CallResponse = Await UaTcpSessionClient.FromModel(Me).CallAsync(New CallRequest With
             {
                .MethodsToCall =
                 {
@@ -185,7 +185,7 @@
         /// &lt;returns&gt;A &lt;see cref="Task"/&gt; that returns the output arguments.&lt;/returns&gt;
         public async Task&lt;object[]&gt; $propertyName$(params object[] inArgs)
         {
-            var response = await this.Session.CallAsync(new CallRequest
+            var response = await UaTcpSessionClient.FromModel(this).CallAsync(new CallRequest
             {
                MethodsToCall = new[]
                 {

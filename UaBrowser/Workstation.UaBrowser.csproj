@@ -152,9 +152,6 @@
     <Content Include="Microsoft.Win32.Primitives.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <Content Include="Prism.dll">
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
     <Content Include="System.AppContext.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -230,9 +227,6 @@
   <ItemGroup>
     <Content Include="hmi2.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      <IncludeInVSIX>true</IncludeInVSIX>
-    </Content>
-    <Content Include="MetroLog.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
     <Content Include="Resources\Package.ico">

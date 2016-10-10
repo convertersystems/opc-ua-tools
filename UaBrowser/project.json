@@ -5,7 +5,7 @@
     "System.Security.Cryptography.X509Certificates": "4.1.0",
     "VSSDK.ComponentModelHost": "12.0.4",
     "VSSDK.IDE.12": "12.0.4",
-    "Workstation.UaClient": "1.1.0"
+    "Workstation.UaClient": "1.4.0"
   },
   "frameworks": {
     ".NETFramework,Version=v4.6.1": {}

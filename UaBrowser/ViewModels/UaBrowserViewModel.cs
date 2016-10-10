@@ -50,9 +50,14 @@ namespace Workstation.UaBrowser.ViewModels
         private string methodFormatCSharp;
         private ApplicationDescription localDescription;
         private X509Certificate2 localCertificate;
+        private IUserIdentity userIdentity = null;
+        private string userName;
+        private string password;
+        private bool showingLoginPanel;
 
         public UaBrowserViewModel()
         {
+            showingLoginPanel = true;
         }
 
         [ImportingConstructor]
@@ -69,7 +74,6 @@ namespace Workstation.UaBrowser.ViewModels
                 ApplicationType = ApplicationType.Client
             };
 
-            this.RefreshCommand = new DelegateCommand(async (s) => await this.RefreshAsync(s));
             this.BrowseStopCommand = new DelegateCommand(this.BrowseStop);
             this.SaveSettingsCommand = new DelegateCommand(this.SaveSettings);
             this.ResetSettingsCommand = new DelegateCommand(this.ResetSettings);
@@ -99,6 +103,15 @@ namespace Workstation.UaBrowser.ViewModels
                 this.NotifyPropertyChanged();
             }
         }
+
+        public bool ShowingLoginPanel
+        {
+            get
+            {
+                return this.showingLoginPanel;
+            }
+        }
+
 
         public string EventFormatBasic
         {
@@ -216,8 +229,6 @@ namespace Workstation.UaBrowser.ViewModels
                 this.NotifyPropertyChanged();
             }
         }
-
-        public ICommand RefreshCommand { get; private set; }
 
         public ICommand ResetSettingsCommand { get; private set; }
 
@@ -493,11 +504,37 @@ namespace Workstation.UaBrowser.ViewModels
                                     this.localCertificate = this.localDescription.GetCertificate(createIfNotFound: true);
                                 }
 
+                                if (selectedEndpoint.UserIdentityTokens.Any(p => p.TokenType == UserTokenType.Anonymous))
+                                {
+                                    this.HideLoginPanel();
+                                    this.userIdentity = new AnonymousIdentity();
+                                }
+                                else if (selectedEndpoint.UserIdentityTokens.Any(p => p.TokenType == UserTokenType.UserName))
+                                {
+                                    if (!this.showingLoginPanel)
+                                    {
+                                        this.ShowLoginPanel();
+                                        return;
+                                    }
+                                    else if (!this.ValidateLoginCredentials())
+                                    {
+                                        return;
+                                    }
+                                    else
+                                    {
+                                        this.userIdentity = new UserNameIdentity(this.userName, this.password);
+                                    }
+                                }
+                                else
+                                {
+                                    throw new NotImplementedException("Browser supports only UserName and Anonymous identity, for now.");
+                                }
+
                                 this.session = new UaTcpSessionChannel(
-                                    this.localDescription,
-                                    this.localCertificate,
-                                    null,
-                                    selectedEndpoint);
+                                this.localDescription,
+                                this.localCertificate,
+                                this.userIdentity,
+                                selectedEndpoint);
                                 await this.session.OpenAsync();
                             }
 
@@ -697,6 +734,30 @@ namespace Workstation.UaBrowser.ViewModels
             }
         }
 
+        private bool ValidateLoginCredentials()
+        {
+            var isValid = !string.IsNullOrEmpty(this.userName);
+            return isValid;
+        }
+
+        private void ShowLoginPanel()
+        {
+            if (!this.showingLoginPanel)
+            {
+                this.showingLoginPanel = true;
+                this.NotifyPropertyChanged("ShowingLoginPanel");
+            }
+        }
+
+        private void HideLoginPanel()
+        {
+            if (this.showingLoginPanel)
+            {
+                this.showingLoginPanel = false;
+                this.NotifyPropertyChanged("ShowingLoginPanel");
+            }
+        }
+
         private void LoadHistory()
         {
             if (this.store != null && this.store.PropertyExists(CollectionPath, nameof(this.History)))
@@ -785,9 +846,9 @@ namespace Workstation.UaBrowser.ViewModels
             }
         }
 
-        private async Task RefreshAsync(object parameter)
+        public async Task RefreshAsync(string url, string userName, string password)
         {
-            var endpointUrl = parameter as string;
+            var endpointUrl = url;
             Trace.TraceInformation("BrowseAsync {0}", endpointUrl);
             try
             {
@@ -811,6 +872,9 @@ namespace Workstation.UaBrowser.ViewModels
                     }
 
                     this.EndpointUrl = endpointUrl;
+                    this.userName = userName;
+                    this.password = password;
+
                     if (string.IsNullOrEmpty(endpointUrl))
                     {
                         return;

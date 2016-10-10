@@ -16,4 +16,8 @@ You can drag and drop the nodes onto your view model.
 
 You can customize the code templates by going to Tools...Options...OPC UA Browser
 
+### Releases
+
+v1.4.0 Added "Sign In" panel to support servers that require a UserNameIdentity. 
+
 [1]: UaBrowser.png
