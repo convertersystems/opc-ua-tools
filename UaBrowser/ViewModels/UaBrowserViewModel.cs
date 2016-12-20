@@ -49,7 +49,6 @@ namespace Workstation.UaBrowser.ViewModels
         private string methodFormatBasic;
         private string methodFormatCSharp;
         private ApplicationDescription localDescription;
-        private X509Certificate2 localCertificate;
         private IUserIdentity userIdentity = null;
         private string userName;
         private string password;
@@ -84,6 +83,7 @@ namespace Workstation.UaBrowser.ViewModels
 
             this.LoadSettings();
             this.LoadHistory();
+            this.CertificateStore = new DirectoryStore(Environment.ExpandEnvironmentVariables(@"%LOCALAPPDATA%\Workstation.UaBrowser\pki"));
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -97,7 +97,7 @@ namespace Workstation.UaBrowser.ViewModels
                 return this.endpointUrl;
             }
 
-            private set
+            set
             {
                 this.endpointUrl = value;
                 this.NotifyPropertyChanged();
@@ -262,6 +262,11 @@ namespace Workstation.UaBrowser.ViewModels
             }
         }
 
+        public ICertificateStore CertificateStore
+        {
+            get;
+        }
+
         public void Dispose()
         {
             this.SaveHistory();
@@ -285,14 +290,17 @@ namespace Workstation.UaBrowser.ViewModels
             }
         }
 
+        public const string vsCMLanguageCSharp = "{B5E9BD34-6D3E-4B5D-925E-8A43B79820B4}";
+        public const string vsCMLanguageVB = "{B5E9BD33-6D3E-4B5D-925E-8A43B79820B4}";
+
         public string FormatProperty(ReferenceDescriptionViewModel vm)
         {
             var fcm = this.ide?.ActiveDocument?.ProjectItem?.FileCodeModel;
-            var language = fcm?.Language ?? CodeModelLanguageConstants.vsCMLanguageCSharp;
+            var language = fcm?.Language ?? vsCMLanguageCSharp;
 
             switch (language)
             {
-                case CodeModelLanguageConstants.vsCMLanguageCSharp:
+                case vsCMLanguageCSharp:
                     if (vm.IsVariable)
                     {
                         if (vm.AccessLevel.HasFlag(AccessLevelFlags.CurrentWrite))
@@ -315,7 +323,7 @@ namespace Workstation.UaBrowser.ViewModels
 
                     break;
 
-                case CodeModelLanguageConstants.vsCMLanguageVB:
+                case vsCMLanguageVB:
                     if (vm.IsVariable)
                     {
                         if (vm.AccessLevel.HasFlag(AccessLevelFlags.CurrentWrite))
@@ -387,10 +395,10 @@ namespace Workstation.UaBrowser.ViewModels
             {
                 switch (language)
                 {
-                    case CodeModelLanguageConstants.vsCMLanguageCSharp:
+                    case vsCMLanguageCSharp:
                         return t.GetElementType().Name + "[]";
 
-                    case CodeModelLanguageConstants.vsCMLanguageVB:
+                    case vsCMLanguageVB:
                         return t.GetElementType().Name + "()";
                 }
             }
@@ -408,14 +416,14 @@ namespace Workstation.UaBrowser.ViewModels
             StringBuilder txt = new StringBuilder();
             switch (language)
             {
-                case CodeModelLanguageConstants.vsCMLanguageCSharp:
+                case vsCMLanguageCSharp:
                     txt.Append(t.Name, 0, t.Name.IndexOf('`'));
                     txt.Append("<");
                     txt.Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, language))));
                     txt.Append(">");
                     return txt.ToString();
 
-                case CodeModelLanguageConstants.vsCMLanguageVB:
+                case vsCMLanguageVB:
                     txt.Append(t.Name, 0, t.Name.IndexOf('`'));
                     txt.Append("(Of ");
                     txt.Append(string.Join(", ", t.GetGenericArguments().Select(arg => FormatTypeName(arg, language))));
@@ -498,12 +506,7 @@ namespace Workstation.UaBrowser.ViewModels
                                 };
                                 var getEndpointsResponse = await UaTcpDiscoveryClient.GetEndpointsAsync(getEndpointsRequest);
                                 token.ThrowIfCancellationRequested();
-                                var selectedEndpoint = getEndpointsResponse.Endpoints.OrderByDescending(e => e.SecurityLevel).Last();
-                                if (this.localCertificate == null)
-                                {
-                                    this.localCertificate = this.localDescription.GetCertificate(createIfNotFound: true);
-                                }
-
+                                var selectedEndpoint = getEndpointsResponse.Endpoints.OrderByDescending(e => e.SecurityLevel).First();
                                 if (selectedEndpoint.UserIdentityTokens.Any(p => p.TokenType == UserTokenType.Anonymous))
                                 {
                                     this.HideLoginPanel();
@@ -532,7 +535,7 @@ namespace Workstation.UaBrowser.ViewModels
 
                                 this.session = new UaTcpSessionChannel(
                                 this.localDescription,
-                                this.localCertificate,
+                                this.CertificateStore,
                                 this.userIdentity,
                                 selectedEndpoint);
                                 await this.session.OpenAsync();
