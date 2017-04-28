@@ -274,7 +274,10 @@
     <Content Include="Microsoft.Extensions.Logging.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
-    <None Include="Resources\robot.png" />
+    <Content Include="Resources\robot.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <IncludeInVSIX>true</IncludeInVSIX>
+    </Content>
     <Content Include="System.Threading.Tasks.Dataflow.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
@@ -306,7 +309,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="hmi2.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
   </ItemGroup>

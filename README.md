@@ -18,6 +18,6 @@ You can customize the code templates by going to Tools...Options...OPC UA Browse
 
 ### Releases
 
-v1.4.0 Added "Sign In" panel to support servers that require a UserNameIdentity. 
+v1.5.9 Bugfixes for Certificate Dates and DataLengthExceptions. 
 
 [1]: UaBrowser.png

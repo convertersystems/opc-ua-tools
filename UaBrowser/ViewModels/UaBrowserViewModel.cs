@@ -537,7 +537,8 @@ namespace Workstation.UaBrowser.ViewModels
                                 this.localDescription,
                                 this.CertificateStore,
                                 this.userIdentity,
-                                selectedEndpoint);
+                                selectedEndpoint, 
+                                timeoutHint: 30000);
                                 await this.session.OpenAsync();
                             }
 
