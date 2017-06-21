@@ -42,7 +42,7 @@ namespace Workstation.UaBrowser.ViewModels
         private ObservableCollection<ReferenceDescriptionViewModel> namespaceItems;
         private string readOnlyValueFormatBasic;
         private string readOnlyValueFormatCSharp;
-        private UaTcpSessionChannel session;
+        private UaTcpSessionChannel channel;
         private WritableSettingsStore store;
         private string valueFormatBasic;
         private string valueFormatCSharp;
@@ -270,15 +270,15 @@ namespace Workstation.UaBrowser.ViewModels
         public void Dispose()
         {
             this.SaveHistory();
-            if (this.session != null)
+            if (this.channel != null)
             {
                 try
                 {
-                    this.session.CloseAsync().Wait();
+                    this.channel.CloseAsync().Wait();
                 }
                 catch (Exception)
                 {
-                    this.session.AbortAsync().Wait();
+                    this.channel.AbortAsync().Wait();
                 }
             }
 
@@ -305,20 +305,20 @@ namespace Workstation.UaBrowser.ViewModels
                     {
                         if (vm.AccessLevel.HasFlag(AccessLevelFlags.CurrentWrite))
                         {
-                            return FormatSnippet(this.ValueFormatCSharp, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                            return FormatSnippet(this.ValueFormatCSharp, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                         }
 
-                        return FormatSnippet(this.ReadOnlyValueFormatCSharp, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                        return FormatSnippet(this.ReadOnlyValueFormatCSharp, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                     }
 
                     if (vm.IsMethod)
                     {
-                        return FormatSnippet(this.MethodFormatCSharp, vm.DisplayName, vm.FullName, MethodDataTypeCS, vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                        return FormatSnippet(this.MethodFormatCSharp, vm.DisplayName, vm.FullName, MethodDataTypeCS, FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                     }
 
                     if (vm.IsEventNotifier)
                     {
-                        return FormatSnippet(this.EventFormatCSharp, vm.DisplayName, vm.FullName, EventDataTypeCS, vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                        return FormatSnippet(this.EventFormatCSharp, vm.DisplayName, vm.FullName, EventDataTypeCS, FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                     }
 
                     break;
@@ -328,20 +328,20 @@ namespace Workstation.UaBrowser.ViewModels
                     {
                         if (vm.AccessLevel.HasFlag(AccessLevelFlags.CurrentWrite))
                         {
-                            return FormatSnippet(this.ValueFormatBasic, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                            return FormatSnippet(this.ValueFormatBasic, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                         }
 
-                        return FormatSnippet(this.ReadOnlyValueFormatBasic, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                        return FormatSnippet(this.ReadOnlyValueFormatBasic, vm.DisplayName, vm.FullName, FormatTypeName(vm.DataType, language), FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                     }
 
                     if (vm.IsMethod)
                     {
-                        return FormatSnippet(this.MethodFormatBasic, vm.DisplayName, vm.FullName, MethodDataTypeVB, vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                        return FormatSnippet(this.MethodFormatBasic, vm.DisplayName, vm.FullName, MethodDataTypeVB, FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                     }
 
                     if (vm.IsEventNotifier)
                     {
-                        return FormatSnippet(this.EventFormatBasic, vm.DisplayName, vm.FullName, EventDataTypeVB, vm.NodeId.ToString(), vm.Parent.NodeId.ToString(), vm.BrowseName.ToString());
+                        return FormatSnippet(this.EventFormatBasic, vm.DisplayName, vm.FullName, EventDataTypeVB, FormatNodeId(vm.NodeId, language), FormatNodeId(vm.Parent.NodeId, language), vm.BrowseName.ToString());
                     }
 
                     break;
@@ -382,6 +382,26 @@ namespace Workstation.UaBrowser.ViewModels
             {
                 handler(this, new PropertyChangedEventArgs(propertyName));
             }
+        }
+
+        private static string FormatNodeId(ExpandedNodeId n, string language)
+        {
+            if (ExpandedNodeId.IsNull(n))
+            {
+                return string.Empty;
+            }
+
+            var s = n.ToString();
+            switch (language)
+            {
+                case vsCMLanguageCSharp:
+                    return s.Replace("\"", "\\\"");
+
+                case vsCMLanguageVB:
+                    return s.Replace("\"", "\"\"");
+            }
+
+            return string.Empty;
         }
 
         private static string FormatTypeName(Type t, string language)
@@ -497,7 +517,7 @@ namespace Workstation.UaBrowser.ViewModels
                     {
                         try
                         {
-                            if (this.session == null || this.session.State != CommunicationState.Opened)
+                            if (this.channel == null || this.channel.State != CommunicationState.Opened)
                             {
                                 var getEndpointsRequest = new GetEndpointsRequest
                                 {
@@ -506,7 +526,7 @@ namespace Workstation.UaBrowser.ViewModels
                                 };
                                 var getEndpointsResponse = await UaTcpDiscoveryClient.GetEndpointsAsync(getEndpointsRequest);
                                 token.ThrowIfCancellationRequested();
-                                var selectedEndpoint = getEndpointsResponse.Endpoints.OrderByDescending(e => e.SecurityLevel).First();
+                                var selectedEndpoint = getEndpointsResponse.Endpoints.OrderBy(e => e.SecurityLevel).First();
                                 if (selectedEndpoint.UserIdentityTokens.Any(p => p.TokenType == UserTokenType.Anonymous))
                                 {
                                     this.HideLoginPanel();
@@ -533,33 +553,32 @@ namespace Workstation.UaBrowser.ViewModels
                                     throw new NotImplementedException("Browser supports only UserName and Anonymous identity, for now.");
                                 }
 
-                                this.session = new UaTcpSessionChannel(
+                                this.channel = new UaTcpSessionChannel(
                                 this.localDescription,
                                 this.CertificateStore,
                                 this.userIdentity,
-                                selectedEndpoint, 
-                                timeoutHint: 30000);
-                                await this.session.OpenAsync();
+                                selectedEndpoint);
+                                await this.channel.OpenAsync();
                             }
 
                             token.ThrowIfCancellationRequested();
-                            var browseRequest = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = ExpandedNodeId.ToNodeId(parent.NodeId, this.session.NamespaceUris), ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HierarchicalReferences), ResultMask = (uint)BrowseResultMask.All, NodeClassMask = (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, BrowseDirection = BrowseDirection.Forward, IncludeSubtypes = true } }, RequestedMaxReferencesPerNode = 64 };
-                            var browseResponse = await this.session.BrowseAsync(browseRequest);
+                            var browseRequest = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = ExpandedNodeId.ToNodeId(parent.NodeId, this.channel.NamespaceUris), ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HierarchicalReferences), ResultMask = (uint)BrowseResultMask.All, NodeClassMask = (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, BrowseDirection = BrowseDirection.Forward, IncludeSubtypes = true } }, RequestedMaxReferencesPerNode = 4 };
+                            var browseResponse = await this.channel.BrowseAsync(browseRequest);
                             var refs = browseResponse.Results.Where(result => result.References != null).SelectMany(result => result.References).ToArray();
                             if (refs.Length == 0)
                             {
                                 return;
                             }
 
-                            var nodes = refs.Select(r => ExpandedNodeId.ToNodeId(r.NodeId, this.session.NamespaceUris)).ToArray();
+                            var nodes = refs.Select(r => ExpandedNodeId.ToNodeId(r.NodeId, this.channel.NamespaceUris)).ToArray();
                             var readTypeRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.DataType }).ToArray() };
-                            var readTypeResponse = await this.session.ReadAsync(readTypeRequest);
+                            var readTypeResponse = await this.channel.ReadAsync(readTypeRequest);
                             var readRankRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.ValueRank }).ToArray() };
-                            var readRankResponse = await this.session.ReadAsync(readRankRequest);
+                            var readRankResponse = await this.channel.ReadAsync(readRankRequest);
                             var readNotifierRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.EventNotifier }).ToArray() };
-                            var readNotifierResponse = await this.session.ReadAsync(readNotifierRequest);
+                            var readNotifierResponse = await this.channel.ReadAsync(readNotifierRequest);
                             var readAccessLevelRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.UserAccessLevel }).ToArray() };
-                            var readAccessLevelResponse = await this.session.ReadAsync(readAccessLevelRequest);
+                            var readAccessLevelResponse = await this.channel.ReadAsync(readAccessLevelRequest);
 
                             NodeId dataTypeNode;
                             Type dataType;
@@ -573,14 +592,14 @@ namespace Workstation.UaBrowser.ViewModels
                                 dataTypeNode = readTypeResponse.Results[i].GetValueOrDefault(NodeId.Null);
                                 if (dataTypeNode != NodeId.Null)
                                 {
-                                    dataTypeId = NodeId.ToExpandedNodeId(dataTypeNode, this.session.NamespaceUris);
+                                    dataTypeId = NodeId.ToExpandedNodeId(dataTypeNode, this.channel.NamespaceUris);
                                     if (!UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType))
                                     {
                                         do
                                         {
-                                            dataTypeNode = ExpandedNodeId.ToNodeId(dataTypeId, this.session.NamespaceUris);
+                                            dataTypeNode = ExpandedNodeId.ToNodeId(dataTypeId, this.channel.NamespaceUris);
                                             var browseRequest2 = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = dataTypeNode, ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HasSubtype), ResultMask = (uint)BrowseResultMask.None, NodeClassMask = (uint)NodeClass.DataType, BrowseDirection = BrowseDirection.Inverse, IncludeSubtypes = false } } };
-                                            var browseResponse2 = await this.session.BrowseAsync(browseRequest2);
+                                            var browseResponse2 = await this.channel.BrowseAsync(browseRequest2);
                                             dataTypeRef = browseResponse2.Results[0].References?.FirstOrDefault();
                                             dataTypeId = dataTypeRef?.NodeId;
                                         }
@@ -619,35 +638,35 @@ namespace Workstation.UaBrowser.ViewModels
                             {
                                 token.ThrowIfCancellationRequested();
                                 var browseNextRequest = new BrowseNextRequest { ContinuationPoints = continuationPoints, ReleaseContinuationPoints = false };
-                                var browseNextResponse = await this.session.BrowseNextAsync(browseNextRequest);
+                                var browseNextResponse = await this.channel.BrowseNextAsync(browseNextRequest);
                                 refs = browseNextResponse.Results.Where(result => result.References != null).SelectMany(result => result.References).ToArray();
                                 if (refs.Length == 0)
                                 {
                                     return;
                                 }
 
-                                nodes = refs.Select(r => ExpandedNodeId.ToNodeId(r.NodeId, this.session.NamespaceUris)).ToArray();
+                                nodes = refs.Select(r => ExpandedNodeId.ToNodeId(r.NodeId, this.channel.NamespaceUris)).ToArray();
                                 readTypeRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.DataType }).ToArray() };
-                                readTypeResponse = await this.session.ReadAsync(readTypeRequest);
+                                readTypeResponse = await this.channel.ReadAsync(readTypeRequest);
                                 readRankRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.ValueRank }).ToArray() };
-                                readRankResponse = await this.session.ReadAsync(readRankRequest);
+                                readRankResponse = await this.channel.ReadAsync(readRankRequest);
                                 readNotifierRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.EventNotifier }).ToArray() };
-                                readNotifierResponse = await this.session.ReadAsync(readNotifierRequest);
+                                readNotifierResponse = await this.channel.ReadAsync(readNotifierRequest);
                                 readAccessLevelRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.UserAccessLevel }).ToArray() };
-                                readAccessLevelResponse = await this.session.ReadAsync(readAccessLevelRequest);
+                                readAccessLevelResponse = await this.channel.ReadAsync(readAccessLevelRequest);
                                 for (int i = 0; i < refs.Length; i++)
                                 {
                                     dataTypeNode = readTypeResponse.Results[i].GetValueOrDefault(NodeId.Null);
                                     if (dataTypeNode != NodeId.Null)
                                     {
-                                        dataTypeId = NodeId.ToExpandedNodeId(dataTypeNode, this.session.NamespaceUris);
+                                        dataTypeId = NodeId.ToExpandedNodeId(dataTypeNode, this.channel.NamespaceUris);
                                         if (!UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType))
                                         {
                                             do
                                             {
-                                                dataTypeNode = ExpandedNodeId.ToNodeId(dataTypeId, this.session.NamespaceUris);
+                                                dataTypeNode = ExpandedNodeId.ToNodeId(dataTypeId, this.channel.NamespaceUris);
                                                 var browseRequest2 = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = dataTypeNode, ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HasSubtype), ResultMask = (uint)BrowseResultMask.None, NodeClassMask = (uint)NodeClass.DataType, BrowseDirection = BrowseDirection.Inverse, IncludeSubtypes = false } } };
-                                                var browseResponse2 = await this.session.BrowseAsync(browseRequest2);
+                                                var browseResponse2 = await this.channel.BrowseAsync(browseRequest2);
                                                 dataTypeRef = browseResponse2.Results[0].References?.FirstOrDefault();
                                                 dataTypeId = dataTypeRef?.NodeId;
                                             }
@@ -692,10 +711,10 @@ namespace Workstation.UaBrowser.ViewModels
                         catch (ServiceResultException ex)
                         {
                             Trace.TraceInformation("ServiceResultException: {0}", ex);
-                            if (this.session != null)
+                            if (this.channel != null)
                             {
-                                await this.session.AbortAsync(token);
-                                this.session = null;
+                                await this.channel.AbortAsync(token);
+                                this.channel = null;
                             }
 
                             if (ex.HResult == unchecked((int)StatusCodes.BadSessionIdInvalid))
@@ -706,10 +725,10 @@ namespace Workstation.UaBrowser.ViewModels
                         catch (Exception ex)
                         {
                             Trace.TraceInformation("Exception {0}", ex);
-                            if (this.session != null)
+                            if (this.channel != null)
                             {
-                                await this.session.AbortAsync(token);
-                                this.session = null;
+                                await this.channel.AbortAsync(token);
+                                this.channel = null;
                             }
                         }
 
@@ -862,17 +881,17 @@ namespace Workstation.UaBrowser.ViewModels
                 try
                 {
                     this.NamespaceItems.Clear();
-                    if (this.session != null)
+                    if (this.channel != null)
                     {
                         try
                         {
-                            await this.session.CloseAsync();
+                            await this.channel.CloseAsync();
                         }
                         catch (Exception)
                         {
                         }
 
-                        this.session = null;
+                        this.channel = null;
                     }
 
                     this.EndpointUrl = endpointUrl;

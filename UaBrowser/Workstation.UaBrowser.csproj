@@ -284,6 +284,7 @@
     <Content Include="Workstation.UaClient.dll">
       <IncludeInVSIX>true</IncludeInVSIX>
     </Content>
+    <Resource Include="Workstation.UaClient.XML" />
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>

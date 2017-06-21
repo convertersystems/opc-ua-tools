@@ -21,16 +21,8 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant(false)]
 [assembly: NeutralResourcesLanguage("en-US")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version
-//      Build Number
-//      Revision
-//
-// You can specify all the values or you can default the Revision and Build Numbers
-// by using the '*' as shown below:
-[assembly: AssemblyVersion("1.5.9.0")]
-[assembly: AssemblyFileVersion("1.5.9.0")]
+// Also change in source.extension.vsixmanifest and vspackage.resx
+[assembly: AssemblyVersion("1.5.13.0")]
+[assembly: AssemblyFileVersion("1.5.13.0")]
 
 [assembly: System.Windows.ThemeInfo(System.Windows.ResourceDictionaryLocation.None, System.Windows.ResourceDictionaryLocation.SourceAssembly)]

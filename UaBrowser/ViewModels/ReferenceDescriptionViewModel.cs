@@ -69,10 +69,19 @@ namespace Workstation.UaBrowser.ViewModels
                 var list = new List<string>(4);
                 ReferenceDescriptionViewModel current = this;
                 list.Add(current.DisplayName);
-                while (current.Parent != null && current.NodeClass != NodeClass.Object)
+                while (current.Parent != null)
                 {
                     current = current.Parent;
-                    list.Add(current.DisplayName);
+                    var displayName = current.DisplayName;
+                    if (displayName == "Inputs" || displayName == "Outputs" || displayName == "Static")
+                    {
+                        continue;
+                    }
+                    list.Add(displayName);
+                    if (current.NodeClass == NodeClass.Object)
+                    {
+                        break;
+                    }
                 }
 
                 return string.Concat(list.ToArray().Reverse());

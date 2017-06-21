@@ -111,11 +111,11 @@ namespace Workstation.UaBrowser.Properties {
         ///    &apos;&apos;&apos; &lt;returns&gt;A &lt;see cref=&quot;Task&quot;/&gt; that returns the output arguments.&lt;/returns&gt;
         ///    Public Async Function $propertyName$(ByVal ParamArray inArgs() As Object) As Task(Of Object())
         ///
-        ///        Dim response As CallResponse = Await UaTcpSessionClient.FromModel(Me).CallAsync(New CallRequest With
+        ///        Dim response As CallResponse = Await Me.InnerChannel.CallAsync(New CallRequest With
         ///            {
         ///               .MethodsToCall =
         ///                {
-        ///         [rest of string was truncated]&quot;;.
+        ///                    New C [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MethodFormatBasic {
             get {
@@ -131,11 +131,11 @@ namespace Workstation.UaBrowser.Properties {
         ///        /// &lt;returns&gt;A &lt;see cref=&quot;Task&quot;/&gt; that returns the output arguments.&lt;/returns&gt;
         ///        public async Task&lt;object[]&gt; $propertyName$(params object[] inArgs)
         ///        {
-        ///            var response = await UaTcpSessionClient.FromModel(this).CallAsync(new CallRequest
+        ///            var response = await this.InnerChannel.CallAsync(new CallRequest
         ///            {
         ///               MethodsToCall = new[]
         ///                {
-        ///             [rest of string was truncated]&quot;;.
+        ///                    new CallM [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MethodFormatCSharp {
             get {
