@@ -21,6 +21,7 @@ namespace Workstation.UaBrowser.ViewModels
     using Microsoft.VisualStudio.Shell.Settings;
     using Workstation.ServiceModel.Ua;
     using Workstation.ServiceModel.Ua.Channels;
+    using System.Collections.Generic;
 
     [Export]
     public class UaBrowserViewModel : INotifyPropertyChanged, IDisposable
@@ -53,6 +54,7 @@ namespace Workstation.UaBrowser.ViewModels
         private string userName;
         private string password;
         private bool showingLoginPanel;
+        private Dictionary<ExpandedNodeId, Type> dataTypeCache;
 
         public UaBrowserViewModel()
         {
@@ -513,6 +515,7 @@ namespace Workstation.UaBrowser.ViewModels
                 this.NotifyPropertyChanged("IsLoading");
                 try
                 {
+                    parent.Children.Clear();
                     do
                     {
                         try
@@ -552,133 +555,88 @@ namespace Workstation.UaBrowser.ViewModels
                                 {
                                     throw new NotImplementedException("Browser supports only UserName and Anonymous identity, for now.");
                                 }
-
+                                dataTypeCache = new Dictionary<ExpandedNodeId, Type>();
                                 this.channel = new UaTcpSessionChannel(
-                                this.localDescription,
-                                this.CertificateStore,
-                                this.userIdentity,
-                                selectedEndpoint);
+                                    this.localDescription,
+                                    this.CertificateStore,
+                                    this.userIdentity,
+                                    selectedEndpoint);
                                 await this.channel.OpenAsync();
                             }
 
                             token.ThrowIfCancellationRequested();
-                            var browseRequest = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = ExpandedNodeId.ToNodeId(parent.NodeId, this.channel.NamespaceUris), ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HierarchicalReferences), ResultMask = (uint)BrowseResultMask.All, NodeClassMask = (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, BrowseDirection = BrowseDirection.Forward, IncludeSubtypes = true } }, RequestedMaxReferencesPerNode = 4 };
+                            var rds = new List<ReferenceDescription>();
+                            var browseRequest = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = ExpandedNodeId.ToNodeId(parent.NodeId, this.channel.NamespaceUris), ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HierarchicalReferences), ResultMask = (uint)BrowseResultMask.TargetInfo, NodeClassMask = (uint)NodeClass.Variable | (uint)NodeClass.Object | (uint)NodeClass.Method, BrowseDirection = BrowseDirection.Forward, IncludeSubtypes = true } } };
                             var browseResponse = await this.channel.BrowseAsync(browseRequest);
-                            var refs = browseResponse.Results.Where(result => result.References != null).SelectMany(result => result.References).ToArray();
-                            if (refs.Length == 0)
-                            {
-                                return;
-                            }
-
-                            var nodes = refs.Select(r => ExpandedNodeId.ToNodeId(r.NodeId, this.channel.NamespaceUris)).ToArray();
-                            var readTypeRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.DataType }).ToArray() };
-                            var readTypeResponse = await this.channel.ReadAsync(readTypeRequest);
-                            var readRankRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.ValueRank }).ToArray() };
-                            var readRankResponse = await this.channel.ReadAsync(readRankRequest);
-                            var readNotifierRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.EventNotifier }).ToArray() };
-                            var readNotifierResponse = await this.channel.ReadAsync(readNotifierRequest);
-                            var readAccessLevelRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.UserAccessLevel }).ToArray() };
-                            var readAccessLevelResponse = await this.channel.ReadAsync(readAccessLevelRequest);
-
-                            NodeId dataTypeNode;
-                            Type dataType;
-                            int valueRank;
-                            EventNotifierFlags notifier;
-                            AccessLevelFlags accessLevel;
-                            ExpandedNodeId dataTypeId;
-                            ReferenceDescription dataTypeRef;
-                            for (int i = 0; i < refs.Length; i++)
-                            {
-                                dataTypeNode = readTypeResponse.Results[i].GetValueOrDefault(NodeId.Null);
-                                if (dataTypeNode != NodeId.Null)
-                                {
-                                    dataTypeId = NodeId.ToExpandedNodeId(dataTypeNode, this.channel.NamespaceUris);
-                                    if (!UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType))
-                                    {
-                                        do
-                                        {
-                                            dataTypeNode = ExpandedNodeId.ToNodeId(dataTypeId, this.channel.NamespaceUris);
-                                            var browseRequest2 = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = dataTypeNode, ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HasSubtype), ResultMask = (uint)BrowseResultMask.None, NodeClassMask = (uint)NodeClass.DataType, BrowseDirection = BrowseDirection.Inverse, IncludeSubtypes = false } } };
-                                            var browseResponse2 = await this.channel.BrowseAsync(browseRequest2);
-                                            dataTypeRef = browseResponse2.Results[0].References?.FirstOrDefault();
-                                            dataTypeId = dataTypeRef?.NodeId;
-                                        }
-                                        while (dataTypeId != null && !UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType));
-
-                                        if (dataTypeId == null)
-                                        {
-                                            dataType = typeof(object);
-                                        }
-                                    }
-
-                                    valueRank = readRankResponse.Results[i].GetValueOrDefault(-1);
-                                    if (valueRank == 1)
-                                    {
-                                        dataType = dataType.MakeArrayType();
-                                    }
-
-                                    if (valueRank > 1)
-                                    {
-                                        dataType = dataType.MakeArrayType(valueRank);
-                                    }
-                                }
-                                else
-                                {
-                                    dataType = typeof(object);
-                                }
-
-                                notifier = (EventNotifierFlags)Enum.ToObject(typeof(EventNotifierFlags), readNotifierResponse.Results[i].GetValueOrDefault<byte>());
-                                accessLevel = (AccessLevelFlags)Enum.ToObject(typeof(AccessLevelFlags), readAccessLevelResponse.Results[i].GetValueOrDefault<byte>());
-                                parent.Children.Add(new ReferenceDescriptionViewModel(refs[i], dataType, accessLevel, notifier, parent, this.LoadChildrenAsync));
-                                await Task.Yield();
-                            }
-
+                            rds.AddRange(browseResponse.Results.Where(result => result.References != null).SelectMany(result => result.References));
                             var continuationPoints = browseResponse.Results.Select(br => br.ContinuationPoint).Where(cp => cp != null).ToArray();
                             while (continuationPoints.Length > 0)
                             {
                                 token.ThrowIfCancellationRequested();
                                 var browseNextRequest = new BrowseNextRequest { ContinuationPoints = continuationPoints, ReleaseContinuationPoints = false };
                                 var browseNextResponse = await this.channel.BrowseNextAsync(browseNextRequest);
-                                refs = browseNextResponse.Results.Where(result => result.References != null).SelectMany(result => result.References).ToArray();
-                                if (refs.Length == 0)
-                                {
-                                    return;
-                                }
+                                rds.AddRange(browseResponse.Results.Where(result => result.References != null).SelectMany(result => result.References));
+                            }
 
-                                nodes = refs.Select(r => ExpandedNodeId.ToNodeId(r.NodeId, this.channel.NamespaceUris)).ToArray();
-                                readTypeRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.DataType }).ToArray() };
-                                readTypeResponse = await this.channel.ReadAsync(readTypeRequest);
-                                readRankRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.ValueRank }).ToArray() };
-                                readRankResponse = await this.channel.ReadAsync(readRankRequest);
-                                readNotifierRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.EventNotifier }).ToArray() };
-                                readNotifierResponse = await this.channel.ReadAsync(readNotifierRequest);
-                                readAccessLevelRequest = new ReadRequest { NodesToRead = nodes.Select(n => new ReadValueId { NodeId = n, AttributeId = AttributeIds.UserAccessLevel }).ToArray() };
-                                readAccessLevelResponse = await this.channel.ReadAsync(readAccessLevelRequest);
-                                for (int i = 0; i < refs.Length; i++)
+                            if (rds.Count == 0)
+                            {
+                                return;
+                            }
+
+                            foreach (var rd in rds)
+                            {
+                                token.ThrowIfCancellationRequested();
+
+                                var n = ExpandedNodeId.ToNodeId(rd.NodeId, this.channel.NamespaceUris);
+                                Type dataType = null;
+                                EventNotifierFlags notifier = EventNotifierFlags.None;
+                                AccessLevelFlags accessLevel = AccessLevelFlags.None;
+
+
+                                if (rd.NodeClass == NodeClass.Variable)
                                 {
-                                    dataTypeNode = readTypeResponse.Results[i].GetValueOrDefault(NodeId.Null);
+                                    var readRequest = new ReadRequest
+                                    {
+                                        NodesToRead = new ReadValueId[]
+                                        {
+                                        new ReadValueId { NodeId = n, AttributeId = AttributeIds.DataType },
+                                        new ReadValueId { NodeId = n, AttributeId = AttributeIds.ValueRank },
+                                        new ReadValueId { NodeId = n, AttributeId = AttributeIds.UserAccessLevel }
+                                        }
+                                    };
+                                    var readResponse = await this.channel.ReadAsync(readRequest);
+
+                                    ExpandedNodeId dataTypeId, origDataTypeId;
+                                    ReferenceDescription dataTypeRef;
+                                    var dataTypeNode = readResponse.Results[0].GetValueOrDefault(NodeId.Null);
                                     if (dataTypeNode != NodeId.Null)
                                     {
-                                        dataTypeId = NodeId.ToExpandedNodeId(dataTypeNode, this.channel.NamespaceUris);
-                                        if (!UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType))
-                                        {
-                                            do
-                                            {
-                                                dataTypeNode = ExpandedNodeId.ToNodeId(dataTypeId, this.channel.NamespaceUris);
-                                                var browseRequest2 = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = dataTypeNode, ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HasSubtype), ResultMask = (uint)BrowseResultMask.None, NodeClassMask = (uint)NodeClass.DataType, BrowseDirection = BrowseDirection.Inverse, IncludeSubtypes = false } } };
-                                                var browseResponse2 = await this.channel.BrowseAsync(browseRequest2);
-                                                dataTypeRef = browseResponse2.Results[0].References?.FirstOrDefault();
-                                                dataTypeId = dataTypeRef?.NodeId;
-                                            }
-                                            while (dataTypeId != null && !UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType));
+                                        dataTypeId = origDataTypeId = NodeId.ToExpandedNodeId(dataTypeNode, this.channel.NamespaceUris);
 
-                                            if (dataTypeId == null)
+                                        if (!this.dataTypeCache.TryGetValue(dataTypeId, out dataType))
+                                        {
+                                            if (!UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType))
                                             {
-                                                dataType = typeof(object);
+                                                do
+                                                {
+                                                    dataTypeNode = ExpandedNodeId.ToNodeId(dataTypeId, this.channel.NamespaceUris);
+                                                    var browseRequest2 = new BrowseRequest { NodesToBrowse = new[] { new BrowseDescription { NodeId = dataTypeNode, ReferenceTypeId = NodeId.Parse(ReferenceTypeIds.HasSubtype), ResultMask = (uint)BrowseResultMask.None, NodeClassMask = (uint)NodeClass.DataType, BrowseDirection = BrowseDirection.Inverse, IncludeSubtypes = false } } };
+                                                    var browseResponse2 = await this.channel.BrowseAsync(browseRequest2);
+                                                    dataTypeRef = browseResponse2.Results[0].References?.FirstOrDefault();
+                                                    dataTypeId = dataTypeRef?.NodeId;
+                                                }
+                                                while (dataTypeId != null && !UaTcpSecureChannel.DataTypeIdToTypeDictionary.TryGetValue(dataTypeId, out dataType));
+
+                                                if (dataTypeId == null)
+                                                {
+                                                    dataType = typeof(object);
+                                                }
                                             }
+
+                                            this.dataTypeCache.Add(origDataTypeId, dataType);
                                         }
 
-                                        valueRank = readRankResponse.Results[i].GetValueOrDefault(-1);
+                                        var valueRank = readResponse.Results[1].GetValueOrDefault(-1);
                                         if (valueRank == 1)
                                         {
                                             dataType = dataType.MakeArrayType();
@@ -694,23 +652,35 @@ namespace Workstation.UaBrowser.ViewModels
                                         dataType = typeof(object);
                                     }
 
-                                    notifier = (EventNotifierFlags)Enum.ToObject(typeof(EventNotifierFlags), readNotifierResponse.Results[i].GetValueOrDefault<byte>());
-                                    accessLevel = (AccessLevelFlags)Enum.ToObject(typeof(AccessLevelFlags), readAccessLevelResponse.Results[i].GetValueOrDefault<byte>());
-                                    parent.Children.Add(new ReferenceDescriptionViewModel(refs[i], dataType, accessLevel, notifier, parent, this.LoadChildrenAsync));
-                                    await Task.Yield();
+                                    accessLevel = (AccessLevelFlags)Enum.ToObject(typeof(AccessLevelFlags), readResponse.Results[2].GetValueOrDefault<byte>());
+
+                                }
+                                else if (rd.NodeClass == NodeClass.Object)
+                                {
+                                    var readRequest = new ReadRequest
+                                    {
+                                        NodesToRead = new ReadValueId[]
+                                        {
+                                            new ReadValueId { NodeId = n, AttributeId = AttributeIds.EventNotifier },
+                                        }
+                                    };
+                                    var readResponse = await this.channel.ReadAsync(readRequest);
+                                    notifier = (EventNotifierFlags)Enum.ToObject(typeof(EventNotifierFlags), readResponse.Results[0].GetValueOrDefault<byte>());
                                 }
 
-                                continuationPoints = browseNextResponse.Results.Select(br => br.ContinuationPoint).Where(cp => cp != null).ToArray();
+                                parent.Children.Add(new ReferenceDescriptionViewModel(rd, dataType, accessLevel, notifier, parent, this.LoadChildrenAsync));
+                                await Task.Yield();
                             }
 
-                            break;
+                            break; // exit while;
                         }
-                        catch (OperationCanceledException)
+                        catch (OperationCanceledException ex)
                         {
+                            // exit while;
                         }
                         catch (ServiceResultException ex)
                         {
-                            Trace.TraceInformation("ServiceResultException: {0}", ex);
+                            Console.WriteLine("ServiceResultException: {0}", ex);
                             if (this.channel != null)
                             {
                                 await this.channel.AbortAsync(token);
@@ -724,14 +694,13 @@ namespace Workstation.UaBrowser.ViewModels
                         }
                         catch (Exception ex)
                         {
-                            Trace.TraceInformation("Exception {0}", ex);
+                            Console.WriteLine("Exception {0}", ex);
                             if (this.channel != null)
                             {
                                 await this.channel.AbortAsync(token);
                                 this.channel = null;
                             }
                         }
-
                         try
                         {
                             await Task.Delay(5000, token);
@@ -744,7 +713,7 @@ namespace Workstation.UaBrowser.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    Trace.TraceInformation("Exception {0}", ex);
+                    Console.WriteLine("Exception {0}", ex);
                 }
                 finally
                 {
@@ -754,6 +723,7 @@ namespace Workstation.UaBrowser.ViewModels
             }
             catch (OperationCanceledException)
             {
+                // only get here if cancelled while waiting for lock
             }
         }
 

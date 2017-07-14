@@ -18,6 +18,6 @@ You can customize the code templates by going to Tools...Options...OPC UA Browse
 
 ### Releases
 
-v1.5.9 Bugfixes for Certificate Dates and DataLengthExceptions. 
+v1.5.14 Cache data types when browsing. 
 
 [1]: UaBrowser.png

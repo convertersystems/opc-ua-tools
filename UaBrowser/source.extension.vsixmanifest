@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
   <Metadata>
-    <Identity Id="3ebf0b3e-abaa-4161-a990-435fa37f8c69" Version="1.5.13" Language="en-US" Publisher="Converter Systems LLC" />
+    <Identity Id="3ebf0b3e-abaa-4161-a990-435fa37f8c69" Version="1.5.14" Language="en-US" Publisher="Converter Systems LLC" />
     <DisplayName>Workstation.UaBrowser</DisplayName>
     <Description xml:space="preserve">Supports Universal Windows Platform (UWP),  WPF, and now Xamarin.Forms. 
 This extension adds a tool window for browsing the namespace of an OPC UA server.

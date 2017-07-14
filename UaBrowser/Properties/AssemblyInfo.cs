@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 [assembly: NeutralResourcesLanguage("en-US")]
 
 // Also change in source.extension.vsixmanifest and vspackage.resx
-[assembly: AssemblyVersion("1.5.13.0")]
-[assembly: AssemblyFileVersion("1.5.13.0")]
+[assembly: AssemblyVersion("1.5.14.0")]
+[assembly: AssemblyFileVersion("1.5.14.0")]
 
 [assembly: System.Windows.ThemeInfo(System.Windows.ResourceDictionaryLocation.None, System.Windows.ResourceDictionaryLocation.SourceAssembly)]
