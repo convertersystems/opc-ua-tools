@@ -21,8 +21,8 @@ using System.Runtime.InteropServices;
 [assembly: CLSCompliant(false)]
 [assembly: NeutralResourcesLanguage("en-US")]
 
-// Also change in source.extension.vsixmanifest and vspackage.resx
-[assembly: AssemblyVersion("1.5.14.0")]
-[assembly: AssemblyFileVersion("1.5.14.0")]
+// Also change in source.extension.vsixmanifest and UaBrowserPackage.cs
+[assembly: AssemblyVersion("2.2.2.0")]
+[assembly: AssemblyFileVersion("2.2.2.0")]
 
 [assembly: System.Windows.ThemeInfo(System.Windows.ResourceDictionaryLocation.None, System.Windows.ResourceDictionaryLocation.SourceAssembly)]

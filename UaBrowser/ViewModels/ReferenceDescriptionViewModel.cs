@@ -3,109 +3,61 @@
 
 using Workstation.ServiceModel.Ua;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using System.Text;
 
 namespace Workstation.UaBrowser.ViewModels
 {
     public class ReferenceDescriptionViewModel : TreeViewItemViewModel
     {
-        private readonly ReferenceDescription description;
-        private readonly Type dataType;
-        private readonly AccessLevelFlags accessLevel;
-        private readonly EventNotifierFlags notifier;
-        private readonly Func<ReferenceDescriptionViewModel, Task> loadChildren;
+        private static readonly Regex SafeCharsRegex = new Regex(@"[\W]");
+        private static readonly ExpandedNodeId ObjectsFolder = ExpandedNodeId.Parse(ObjectIds.ObjectsFolder);
+        private static readonly ExpandedNodeId ViewsFolder = ExpandedNodeId.Parse(ObjectIds.ViewsFolder);
+        private static readonly ExpandedNodeId TypesFolder = ExpandedNodeId.Parse(ObjectIds.TypesFolder);
 
-        public ReferenceDescriptionViewModel(ReferenceDescription description, Type dataType, AccessLevelFlags accessLevel, EventNotifierFlags eventNotifier, TreeViewItemViewModel parentViewModel, Func<ReferenceDescriptionViewModel, Task> loadChildren)
-            : base(parentViewModel, loadChildren != null)
+        private readonly ReferenceDescription description;
+        private readonly Func<ReferenceDescriptionViewModel, Task> loadChildren;
+        private string fullName;
+
+        public ReferenceDescriptionViewModel(ReferenceDescription description, ReferenceDescriptionViewModel parent, Func<ReferenceDescriptionViewModel, Task> loadChildren)
+            : base(parent, true)
         {
             this.description = description;
-            this.dataType = dataType;
-            this.accessLevel = accessLevel;
-            this.notifier = eventNotifier;
             this.loadChildren = loadChildren;
         }
 
-        public Type DataType
+        public LocalizedText DisplayName => this.description.DisplayName;
+
+        public string FullName => this.fullName ?? (this.fullName = this.GetFullName());
+
+        public ExpandedNodeId NodeId => this.description.NodeId;
+
+        public QualifiedName BrowseName => this.description.BrowseName;
+
+        public NodeClass NodeClass => this.description.NodeClass;
+
+        public new ReferenceDescriptionViewModel Parent => base.Parent as ReferenceDescriptionViewModel;
+
+        public virtual string GetSnippet(string snippet, string language)
         {
-            get { return this.dataType; }
+            return string.Empty;
         }
 
-        public AccessLevelFlags AccessLevel
+        private string GetFullName()
         {
-            get { return this.accessLevel; }
-        }
-
-        public bool IsObject
-        {
-            get { return this.description.NodeClass == NodeClass.Object; }
-        }
-
-        public bool IsMethod
-        {
-            get { return this.description.NodeClass == NodeClass.Method; }
-        }
-
-        public bool IsVariable
-        {
-            get { return this.description.NodeClass == NodeClass.Variable; }
-        }
-
-        public bool IsEventNotifier
-        {
-            get { return this.notifier.HasFlag(EventNotifierFlags.SubscribeToEvents); }
-        }
-
-        public new ReferenceDescriptionViewModel Parent
-        {
-            get { return base.Parent as ReferenceDescriptionViewModel; }
-        }
-
-        public string FullName
-        {
-            get
+            var name = new StringBuilder();
+            for (ReferenceDescriptionViewModel current = this; current != null; current = current.Parent)
             {
-                var list = new List<string>(4);
-                ReferenceDescriptionViewModel current = this;
-                list.Add(current.DisplayName);
-                while (current.Parent != null)
+                if (current.NodeId == ObjectsFolder || current.NodeId == TypesFolder || current.NodeId == ViewsFolder)
                 {
-                    current = current.Parent;
-                    var displayName = current.DisplayName;
-                    if (displayName == "Inputs" || displayName == "Outputs" || displayName == "Static")
-                    {
-                        continue;
-                    }
-                    list.Add(displayName);
-                    if (current.NodeClass == NodeClass.Object)
-                    {
-                        break;
-                    }
+                    break;
                 }
 
-                return string.Concat(list.ToArray().Reverse());
+                name.Insert(0, current.BrowseName.Name);
             }
-        }
 
-        public string DisplayName
-        {
-            get { return this.description.DisplayName.Text; }
-        }
-
-        public ExpandedNodeId NodeId
-        {
-            get { return this.description.NodeId; }
-        }
-
-        public QualifiedName BrowseName
-        {
-            get { return this.description.BrowseName; }
-        }
-
-        public NodeClass NodeClass
-        {
-            get { return this.description.NodeClass; }
+            return SafeCharsRegex.Replace(name.ToString(), "_");
         }
 
         protected override async Task LoadChildrenAsync()

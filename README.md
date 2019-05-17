@@ -4,7 +4,7 @@
 Tools to build an HMI using OPC Unified Architecture and Visual Studio.
 
 To Install:
-You can install the "OPC UA Browser" extension directly into Visual Studio 2015. Go to Tools...Extensions and Updates.  Choose Online tab. Search "Workstation.UaBrowser". Install.
+You can install the "OPC UA Browser" extension directly into Visual Studio 2019. Go to Tools...Extensions and Updates.  Choose Online tab. Search "Workstation.UaBrowser". Install.
 
 To Run:
 To open the Ua Browser window, go to View...Other Windows...OPC UA Browser
@@ -18,6 +18,7 @@ You can customize the code templates by going to Tools...Options...OPC UA Browse
 
 ### Releases
 
+v1.5.15 Support Visual Studio 2019. 
 v1.5.14 Cache data types when browsing. 
 
 [1]: UaBrowser.png

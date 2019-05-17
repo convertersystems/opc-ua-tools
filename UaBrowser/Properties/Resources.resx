@@ -119,42 +119,41 @@
   </resheader>
   <data name="EventFormatBasic" xml:space="preserve">
     <value>    ''' &lt;summary&gt;
-    ''' Gets the event of $propertyName$.
+    ''' Gets the event of $fullName$.
     ''' &lt;/summary&gt;
     &lt;MonitoredItem(nodeId: "$nodeId$", attributeId: AttributeIds.EventNotifier)&gt;
-    Public Property $propertyName$() As $dataType$
+    Public Property $fullName$() As $dataType$
     Get
-        Return _$fieldName$
+        Return _$fullName$
     End Get
     Private Set(ByVal value As $dataType$)
-        SetProperty(_$fieldName$, value)
+        SetProperty(_$fullName$, value)
     End Set
     End Property
 
-    Private _$fieldName$ As $dataType$
+    Private _$fullName$ As $dataType$
 </value>
   </data>
   <data name="EventFormatCSharp" xml:space="preserve">
     <value>        /// &lt;summary&gt;
-        /// Gets the event of $propertyName$.
+        /// Gets the event of $fullName$.
         /// &lt;/summary&gt;
         [MonitoredItem(nodeId: "$nodeId$", attributeId: AttributeIds.EventNotifier)]
-        public $dataType$ $propertyName$
+        public $dataType$ $fullName$
         {
-            get { return this.$fieldName$; }
-            private set { this.SetProperty(ref this.$fieldName$, value); }
+            get { return this._$fullName$; }
+            private set { this.SetProperty(ref this._$fullName$, value); }
         }
 
-        private $dataType$ $fieldName$;
+        private $dataType$ _$fullName$;
 </value>
   </data>
   <data name="MethodFormatBasic" xml:space="preserve">
     <value>    ''' &lt;summary&gt;
-    ''' Invokes the method $propertyName$
+    ''' Invokes the method $fullName$
     ''' &lt;/summary&gt;
-    ''' &lt;param name="inArgs"&gt;The input arguments.&lt;/param&gt;
     ''' &lt;returns&gt;A &lt;see cref="Task"/&gt; that returns the output arguments.&lt;/returns&gt;
-    Public Async Function $propertyName$(ByVal ParamArray inArgs() As Object) As Task(Of Object())
+    Public Async Function $fullName$($parameters$) As  $returnType$
 
         Dim response As CallResponse = Await Me.InnerChannel.CallAsync(New CallRequest With
             {
@@ -164,7 +163,7 @@
                     {
                         .ObjectId = NodeId.Parse("$parentNodeId$"),
                         .MethodId = NodeId.Parse("$nodeId$"),
-                        .InputArguments = inArgs.ToVariantArray()
+                        .InputArguments =  $inputArguments$
                     }
                 }
             })
@@ -173,17 +172,16 @@
             Throw New ServiceResultException(New ServiceResult(result.StatusCode))
         End If
 
-        Return result.OutputArguments.ToObjectArray()
+        Return $returnValue$
     End Function
 </value>
   </data>
   <data name="MethodFormatCSharp" xml:space="preserve">
     <value>        /// &lt;summary&gt;
-        /// Invokes the method $propertyName$.
+        /// Invokes the method $fullName$.
         /// &lt;/summary&gt;
-        /// &lt;param name="inArgs"&gt;The input arguments.&lt;/param&gt;
         /// &lt;returns&gt;A &lt;see cref="Task"/&gt; that returns the output arguments.&lt;/returns&gt;
-        public async Task&lt;object[]&gt; $propertyName$(params object[] inArgs)
+        public async $returnType$ $fullName$($parameters$)
         {
             var response = await this.InnerChannel.CallAsync(new CallRequest
             {
@@ -193,7 +191,7 @@
                     {
                         ObjectId = NodeId.Parse("$parentNodeId$"),
                         MethodId = NodeId.Parse("$nodeId$"),
-                        InputArguments = inArgs.ToVariantArray()
+                        InputArguments = $inputArguments$
                     }
                 }
             });
@@ -204,70 +202,117 @@
                 throw new ServiceResultException(new ServiceResult(result.StatusCode));
             }
 
-            return result.OutputArguments.ToObjectArray();
+            return $returnValue$;
         }
 </value>
   </data>
   <data name="ReadOnlyValueFormatBasic" xml:space="preserve">
     <value>    ''' &lt;summary&gt;
-    ''' Gets the value of $propertyName$.
+    ''' Gets the value of $fullName$.
     ''' &lt;/summary&gt;
     &lt;MonitoredItem(nodeId: "$nodeId$")&gt;
-    Public Property $propertyName$() As $dataType$
+    Public Property $fullName$() As $dataType$
     Get
-        Return _$fieldName$
+        Return _$fullName$
     End Get
     Private Set(ByVal value As $dataType$)
-        SetProperty(_$fieldName$, value)
+        SetProperty(_$fullName$, value)
     End Set
     End Property
 
-    Private _$fieldName$ As $dataType$
+    Private _$fullName$ As $dataType$
 </value>
   </data>
   <data name="ReadOnlyValueFormatCSharp" xml:space="preserve">
     <value>        /// &lt;summary&gt;
-        /// Gets the value of $propertyName$.
+        /// Gets the value of $fullName$.
         /// &lt;/summary&gt;
         [MonitoredItem(nodeId: "$nodeId$")]
-        public $dataType$ $propertyName$
+        public $dataType$ $fullName$
         {
-            get { return this.$fieldName$; }
-            private set { this.SetProperty(ref this.$fieldName$, value); }
+            get { return this._$fullName$; }
+            private set { this.SetProperty(ref this._$fullName$, value); }
         }
 
-        private $dataType$ $fieldName$;
+        private $dataType$ _$fullName$;
 </value>
+  </data>
+  <data name="StructureFormatBasic" xml:space="preserve">
+    <value>        [DataTypeId("$nodeId$")]
+        [BinaryEncodingId("$binaryEncodingId$")]
+        Public Class $dataType$
+            Inherits $baseType$
+
+/*
+$element$
+*/
+
+            Public Sub Encode(ByVal encoder As IEncoder)
+                base.Encode(encoder);
+                encoder.PushNamespace("$targetNamespace$");
+                encoder.PopNamespace();
+            End Sub
+
+            Public Sub Decode(ByVal decoder As IDecoder)
+                base.Decode(decoder);
+                decoder.PushNamespace("$targetNamespace$");
+                decoder.PopNamespace();
+            End Sub
+        End Class</value>
+  </data>
+  <data name="StructureFormatCSharp" xml:space="preserve">
+    <value>        [DataTypeId("$nodeId$")]
+        [BinaryEncodingId("$binaryEncodingId$")]
+        public class $dataType$ : $baseType$
+        {
+/*
+$element$
+*/
+
+            public override void Encode(IEncoder encoder)
+            {
+                base.Encode(encoder);
+                encoder.PushNamespace("$targetNamespace$");
+                encoder.PopNamespace();
+            }
+
+            public override void Decode(IDecoder decoder)
+            {
+                base.Decode(decoder);
+                decoder.PushNamespace("$targetNamespace$");
+                decoder.PopNamespace();
+            }
+        }</value>
   </data>
   <data name="ValueFormatBasic" xml:space="preserve">
     <value>    ''' &lt;summary&gt;
-    ''' Gets or sets the value of $propertyName$.
+    ''' Gets or sets the value of $fullName$.
     ''' &lt;/summary&gt;
     &lt;MonitoredItem(nodeId: "$nodeId$")&gt;
-    Public Property $propertyName$() As $dataType$
+    Public Property $fullName$() As $dataType$
     Get
-        Return _$fieldName$
+        Return _$fullName$
     End Get
     Set(ByVal value As $dataType$)
-        SetProperty(_$fieldName$, value)
+        SetProperty(_$fullName$, value)
     End Set
     End Property
 
-    Private _$fieldName$ As $dataType$
+    Private _$fullName$ As $dataType$
 </value>
   </data>
   <data name="ValueFormatCSharp" xml:space="preserve">
     <value>        /// &lt;summary&gt;
-        /// Gets or sets the value of $propertyName$.
+        /// Gets or sets the value of $fullName$.
         /// &lt;/summary&gt;
         [MonitoredItem(nodeId: "$nodeId$")]
-        public $dataType$ $propertyName$
+        public $dataType$ $fullName$
         {
-            get { return this.$fieldName$; }
-            set { this.SetProperty(ref this.$fieldName$, value); }
+            get { return this._$fullName$; }
+            set { this.SetProperty(ref this._$fullName$, value); }
         }
 
-        private $dataType$ $fieldName$;
+        private $dataType$ _$fullName$;
 </value>
   </data>
 </root>

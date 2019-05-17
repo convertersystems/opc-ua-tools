@@ -19,7 +19,7 @@ namespace Workstation.UaBrowser.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -62,19 +62,19 @@ namespace Workstation.UaBrowser.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to     &apos;&apos;&apos; &lt;summary&gt;
-        ///    &apos;&apos;&apos; Gets the event of $propertyName$.
+        ///    &apos;&apos;&apos; Gets the event of $fullName$.
         ///    &apos;&apos;&apos; &lt;/summary&gt;
         ///    &lt;MonitoredItem(nodeId: &quot;$nodeId$&quot;, attributeId: AttributeIds.EventNotifier)&gt;
-        ///    Public Property $propertyName$() As $dataType$
+        ///    Public Property $fullName$() As $dataType$
         ///    Get
-        ///        Return _$fieldName$
+        ///        Return _$fullName$
         ///    End Get
         ///    Private Set(ByVal value As $dataType$)
-        ///        SetProperty(_$fieldName$, value)
+        ///        SetProperty(_$fullName$, value)
         ///    End Set
         ///    End Property
         ///
-        ///    Private _$fieldName$ As $dataType$
+        ///    Private _$fullName$ As $dataType$
         ///.
         /// </summary>
         internal static string EventFormatBasic {
@@ -85,16 +85,16 @@ namespace Workstation.UaBrowser.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to         /// &lt;summary&gt;
-        ///        /// Gets the event of $propertyName$.
+        ///        /// Gets the event of $fullName$.
         ///        /// &lt;/summary&gt;
         ///        [MonitoredItem(nodeId: &quot;$nodeId$&quot;, attributeId: AttributeIds.EventNotifier)]
-        ///        public $dataType$ $propertyName$
+        ///        public $dataType$ $fullName$
         ///        {
-        ///            get { return this.$fieldName$; }
-        ///            private set { this.SetProperty(ref this.$fieldName$, value); }
+        ///            get { return this._$fullName$; }
+        ///            private set { this.SetProperty(ref this._$fullName$, value); }
         ///        }
         ///
-        ///        private $dataType$ $fieldName$;
+        ///        private $dataType$ _$fullName$;
         ///.
         /// </summary>
         internal static string EventFormatCSharp {
@@ -105,17 +105,18 @@ namespace Workstation.UaBrowser.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to     &apos;&apos;&apos; &lt;summary&gt;
-        ///    &apos;&apos;&apos; Invokes the method $propertyName$
+        ///    &apos;&apos;&apos; Invokes the method $fullName$
         ///    &apos;&apos;&apos; &lt;/summary&gt;
-        ///    &apos;&apos;&apos; &lt;param name=&quot;inArgs&quot;&gt;The input arguments.&lt;/param&gt;
         ///    &apos;&apos;&apos; &lt;returns&gt;A &lt;see cref=&quot;Task&quot;/&gt; that returns the output arguments.&lt;/returns&gt;
-        ///    Public Async Function $propertyName$(ByVal ParamArray inArgs() As Object) As Task(Of Object())
+        ///    Public Async Function $fullName$($parameters$) As  $returnType$
         ///
         ///        Dim response As CallResponse = Await Me.InnerChannel.CallAsync(New CallRequest With
         ///            {
         ///               .MethodsToCall =
         ///                {
-        ///                    New C [rest of string was truncated]&quot;;.
+        ///                    New CallMethodRequest With
+        ///                    {
+        ///                        .ObjectId = NodeId.Parse [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MethodFormatBasic {
             get {
@@ -125,17 +126,18 @@ namespace Workstation.UaBrowser.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to         /// &lt;summary&gt;
-        ///        /// Invokes the method $propertyName$.
+        ///        /// Invokes the method $fullName$.
         ///        /// &lt;/summary&gt;
-        ///        /// &lt;param name=&quot;inArgs&quot;&gt;The input arguments.&lt;/param&gt;
         ///        /// &lt;returns&gt;A &lt;see cref=&quot;Task&quot;/&gt; that returns the output arguments.&lt;/returns&gt;
-        ///        public async Task&lt;object[]&gt; $propertyName$(params object[] inArgs)
+        ///        public async $returnType$ $fullName$($parameters$)
         ///        {
         ///            var response = await this.InnerChannel.CallAsync(new CallRequest
         ///            {
         ///               MethodsToCall = new[]
         ///                {
-        ///                    new CallM [rest of string was truncated]&quot;;.
+        ///                    new CallMethodRequest
+        ///                    {
+        ///                        ObjectId = NodeId.Pars [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string MethodFormatCSharp {
             get {
@@ -145,19 +147,19 @@ namespace Workstation.UaBrowser.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to     &apos;&apos;&apos; &lt;summary&gt;
-        ///    &apos;&apos;&apos; Gets the value of $propertyName$.
+        ///    &apos;&apos;&apos; Gets the value of $fullName$.
         ///    &apos;&apos;&apos; &lt;/summary&gt;
         ///    &lt;MonitoredItem(nodeId: &quot;$nodeId$&quot;)&gt;
-        ///    Public Property $propertyName$() As $dataType$
+        ///    Public Property $fullName$() As $dataType$
         ///    Get
-        ///        Return _$fieldName$
+        ///        Return _$fullName$
         ///    End Get
         ///    Private Set(ByVal value As $dataType$)
-        ///        SetProperty(_$fieldName$, value)
+        ///        SetProperty(_$fullName$, value)
         ///    End Set
         ///    End Property
         ///
-        ///    Private _$fieldName$ As $dataType$
+        ///    Private _$fullName$ As $dataType$
         ///.
         /// </summary>
         internal static string ReadOnlyValueFormatBasic {
@@ -168,16 +170,16 @@ namespace Workstation.UaBrowser.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to         /// &lt;summary&gt;
-        ///        /// Gets the value of $propertyName$.
+        ///        /// Gets the value of $fullName$.
         ///        /// &lt;/summary&gt;
         ///        [MonitoredItem(nodeId: &quot;$nodeId$&quot;)]
-        ///        public $dataType$ $propertyName$
+        ///        public $dataType$ $fullName$
         ///        {
-        ///            get { return this.$fieldName$; }
-        ///            private set { this.SetProperty(ref this.$fieldName$, value); }
+        ///            get { return this._$fullName$; }
+        ///            private set { this.SetProperty(ref this._$fullName$, value); }
         ///        }
         ///
-        ///        private $dataType$ $fieldName$;
+        ///        private $dataType$ _$fullName$;
         ///.
         /// </summary>
         internal static string ReadOnlyValueFormatCSharp {
@@ -187,20 +189,73 @@ namespace Workstation.UaBrowser.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to         [DataTypeId(&quot;$nodeId$&quot;)]
+        ///        [BinaryEncodingId(&quot;$binaryEncodingId$&quot;)]
+        ///        Public Class $dataType$
+        ///            Inherits $baseType$
+        ///
+        ////*
+        ///$element$
+        ///*/
+        ///
+        ///            Public Sub Encode(ByVal encoder As IEncoder)
+        ///                base.Encode(encoder);
+        ///                encoder.PushNamespace(&quot;$targetNamespace$&quot;);
+        ///                encoder.PopNamespace();
+        ///            End Sub
+        ///
+        ///            Public Sub Decode(ByVal decoder As IDecoder)
+        ///                base.Decode(decoder);
+        ///                deco [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string StructureFormatBasic {
+            get {
+                return ResourceManager.GetString("StructureFormatBasic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to         [DataTypeId(&quot;$nodeId$&quot;)]
+        ///        [BinaryEncodingId(&quot;$binaryEncodingId$&quot;)]
+        ///        public class $dataType$ : $baseType$
+        ///        {
+        ////*
+        ///$element$
+        ///*/
+        ///
+        ///            public override void Encode(IEncoder encoder)
+        ///            {
+        ///                base.Encode(encoder);
+        ///                encoder.PushNamespace(&quot;$targetNamespace$&quot;);
+        ///                encoder.PopNamespace();
+        ///            }
+        ///
+        ///            public override void Decode(IDecoder decoder)
+        ///            {
+        ///                base.Decode(decoder);
+        ///      [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string StructureFormatCSharp {
+            get {
+                return ResourceManager.GetString("StructureFormatCSharp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to     &apos;&apos;&apos; &lt;summary&gt;
-        ///    &apos;&apos;&apos; Gets or sets the value of $propertyName$.
+        ///    &apos;&apos;&apos; Gets or sets the value of $fullName$.
         ///    &apos;&apos;&apos; &lt;/summary&gt;
         ///    &lt;MonitoredItem(nodeId: &quot;$nodeId$&quot;)&gt;
-        ///    Public Property $propertyName$() As $dataType$
+        ///    Public Property $fullName$() As $dataType$
         ///    Get
-        ///        Return _$fieldName$
+        ///        Return _$fullName$
         ///    End Get
         ///    Set(ByVal value As $dataType$)
-        ///        SetProperty(_$fieldName$, value)
+        ///        SetProperty(_$fullName$, value)
         ///    End Set
         ///    End Property
         ///
-        ///    Private _$fieldName$ As $dataType$
+        ///    Private _$fullName$ As $dataType$
         ///.
         /// </summary>
         internal static string ValueFormatBasic {
@@ -211,16 +266,16 @@ namespace Workstation.UaBrowser.Properties {
         
         /// <summary>
         ///   Looks up a localized string similar to         /// &lt;summary&gt;
-        ///        /// Gets or sets the value of $propertyName$.
+        ///        /// Gets or sets the value of $fullName$.
         ///        /// &lt;/summary&gt;
         ///        [MonitoredItem(nodeId: &quot;$nodeId$&quot;)]
-        ///        public $dataType$ $propertyName$
+        ///        public $dataType$ $fullName$
         ///        {
-        ///            get { return this.$fieldName$; }
-        ///            set { this.SetProperty(ref this.$fieldName$, value); }
+        ///            get { return this._$fullName$; }
+        ///            set { this.SetProperty(ref this._$fullName$, value); }
         ///        }
         ///
-        ///        private $dataType$ $fieldName$;
+        ///        private $dataType$ _$fullName$;
         ///.
         /// </summary>
         internal static string ValueFormatCSharp {

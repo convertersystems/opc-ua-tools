@@ -69,7 +69,7 @@ namespace Workstation.UaBrowser
                     if (rdvm != null)
                     {
                         var vm = this.DataContext as UaBrowserViewModel;
-                        var text = vm.FormatProperty(rdvm);
+                        var text = vm.GetSnippet(rdvm);
                         if (!string.IsNullOrEmpty(text))
                         {
                             DataObject data = new DataObject(System.Windows.DataFormats.Text, text);

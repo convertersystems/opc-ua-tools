@@ -7,14 +7,13 @@
              xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
              xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"
              xmlns:vm="clr-namespace:Workstation.UaBrowser.ViewModels"
-             xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.14.0"
+             xmlns:vs="clr-namespace:Microsoft.VisualStudio.PlatformUI;assembly=Microsoft.VisualStudio.Shell.15.0"
              d:DataContext="{d:DesignInstance Type={x:Type vm:UaBrowserViewModel}}"
              d:DesignHeight="300"
              d:DesignWidth="300"
              mc:Ignorable="d">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-        <data:AccessLevelToStringConverter x:Key="AccessLevelToStringConverter" />
         <data:TypeToStringConverter x:Key="TypeToStringConverter" />
         <PathGeometry x:Key="RefreshGeometry"
                       Figures="M58.78125,5.15583038330078L83.953125,30.3277053833008 58.828125,55.4995803833008 58.828125,37.3120803833008 52.7695274353027,37.8745803833008 46.875,39.5620803833008 41.34375,42.409740447998 36.375,46.4527053833008 32.19140625,51.491771697998 29.203125,57.1402053833008 27.4101543426514,63.1636428833008 26.8125,69.3277053833008 27.3808574676514,75.3921585083008 29.0859375,81.3042678833008 31.951171875,86.8530960083008 36,91.8277053833008 41.0390625,96.0230178833008 46.6640625,99.0230178833008 52.6640625,100.804267883301 58.828125,101.390205383301 64.880859375,100.821846008301 70.7578125,99.1167678833008 76.283203125,96.2515335083008 81.28125,92.2027053833008 85.453125,87.1402053833008 88.4296875,81.5152053833008 90.234375,75.5152053833008 90.84375,69.3277053833008 90.1875,62.9058303833008 104.109375,62.9058303833008 104.53125,69.2808303833008 104.320304870605,73.7222366333008 103.6875,78.1402053833008 102.626945495605,82.4937210083008 101.1328125,86.7417678833008 99.2109298706055,90.8491897583008 96.8671875,94.7808303833008 94.095703125,98.5073928833008 90.890625,101.999580383301 87.4453125,105.075752258301 83.765625,107.741767883301 79.892578125,109.997627258301 75.8671875,111.843330383301 71.71875,113.278877258301 67.4765625,114.304267883301 63.169921875,114.919502258301 58.828125,115.124580383301 54.3925743103027,114.913642883301 49.9921875,114.280830383301 45.66796875,113.220283508301 41.4609375,111.726142883301 37.388671875,109.804267883301 33.46875,107.460517883301 29.7421855926514,104.689033508301 26.25,101.483955383301 23.173828125,98.0327835083008 20.5078125,94.3355178833008 18.24609375,90.4448928833008 16.3828125,86.4136428833008 14.9296865463257,82.2534866333008 13.8984384536743,77.9761428833008 13.283203125,73.6343460083008 13.0781259536743,69.2808303833008 13.2890615463257,64.8452835083008 13.9218740463257,60.4448928833008 14.9824209213257,56.1148147583008 16.4765625,51.8902053833008 18.3984375,47.800365447998 20.7421875,43.8745803833008 23.513671875,40.1480178833008 26.71875,36.6558303833008 30.1699199676514,33.5855178833008 33.8671875,30.9370803833008 37.751953125,28.7046585083008 41.765625,26.8823928833008 45.90234375,25.4644241333008 50.15625,24.4448928833008 54.4687461853027,23.8296585083008 58.78125,23.6245803833008 58.78125,5.15583038330078z"
@@ -483,6 +482,99 @@
             </Setter>
         </Style>
 
+        <HierarchicalDataTemplate DataType="{x:Type vm:MethodDescriptionViewModel}"
+                                  ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                                      SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path Width="14"
+                      Height="14"
+                      Margin="2"
+                      VerticalAlignment="Center"
+                      Data="{StaticResource RemoteGeometry}"
+                      Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
+                      Stretch="Uniform" />
+                <TextBlock Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"><Run Text="{Binding ReturnType, Mode=OneWay}" /> <Run FontWeight="Bold"
+                                                                                                            Text="{Binding DisplayName, Mode=OneWay}" />(<Run Text="{Binding Parameters, Mode=OneWay}" />)</TextBlock>
+            </Grid>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type vm:PropertyDescriptionViewModel}"
+                                  ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                                      SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path Width="14"
+                      Height="14"
+                      Margin="2"
+                      VerticalAlignment="Center"
+                      Data="{StaticResource WrenchGeometry}"
+                      Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
+                      Stretch="Uniform" />
+                <TextBlock Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"><Run Text="{Binding PropertyType, Mode=OneWay}" /> <Run FontWeight="Bold"
+                                    Text="{Binding DisplayName, Mode=OneWay}" /> <Run x:Name="accessors" Text="{}{ get; set; }" /></TextBlock>
+            </Grid>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type vm:ReadonlyPropertyDescriptionViewModel}"
+                                  ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                                      SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path Width="14"
+                      Height="14"
+                      Margin="2"
+                      VerticalAlignment="Center"
+                      Data="{StaticResource WrenchGeometry}"
+                      Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
+                      Stretch="Uniform" />
+                <TextBlock Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"><Run Text="{Binding PropertyType, Mode=OneWay}" /> <Run FontWeight="Bold"
+                                                                                                              Text="{Binding DisplayName, Mode=OneWay}" /> <Run x:Name="accessors"
+                                                                                                                                                                Text="{}{ get; }" /></TextBlock>
+            </Grid>
+        </HierarchicalDataTemplate>
+
+        <HierarchicalDataTemplate DataType="{x:Type vm:EventDescriptionViewModel}"
+                                  ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                                      SharedSizeGroup="Icon" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Path Width="14"
+                      Height="14"
+                      Margin="2"
+                      VerticalAlignment="Center"
+                      Data="{StaticResource CubeGeometry}"
+                      Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
+                      Stretch="Uniform" />
+                <TextBlock Grid.Column="1"
+                           Margin="3,3"
+                           VerticalAlignment="Center"><Run Text="BaseEvent" /> <Run FontWeight="Bold"
+                                                                                    Text="{Binding DisplayName, Mode=OneWay}" /> <Run Text="{}{ get; }" /></TextBlock>
+            </Grid>
+        </HierarchicalDataTemplate>
+
         <HierarchicalDataTemplate DataType="{x:Type vm:ReferenceDescriptionViewModel}"
                                   ItemsSource="{Binding Children}">
             <Grid>
@@ -492,74 +584,20 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <Path x:Name="icon"
-                      Width="14"
+                <Path Width="14"
                       Height="14"
                       Margin="2"
                       VerticalAlignment="Center"
                       Data="{StaticResource CubeGeometry}"
                       Fill="{DynamicResource {x:Static vs:EnvironmentColors.ComboBoxTextBrushKey}}"
                       Stretch="Uniform" />
-                <TextBlock x:Name="folderContent"
-                           Grid.Column="1"
+                <TextBlock Grid.Column="1"
                            Margin="3,3"
                            VerticalAlignment="Center"><Run FontWeight="Bold"
                                                            Text="{Binding DisplayName, Mode=OneWay}" /></TextBlock>
-                <TextBlock x:Name="variableContent"
-                           Grid.Column="1"
-                           Margin="3,3"
-                           VerticalAlignment="Center"
-                           Visibility="Hidden"><Run Text="{Binding DataType, Converter={StaticResource TypeToStringConverter}, Mode=OneWay}" /><Run Text=" " /><Run FontWeight="Bold"
-                                                                                                                                                                    Text="{Binding DisplayName, Mode=OneWay}" /><Run Text=" " /><Run Text="{Binding AccessLevel, Converter={StaticResource AccessLevelToStringConverter}, Mode=OneWay}" /></TextBlock>
-                <TextBlock x:Name="methodContent"
-                           Grid.Column="1"
-                           Margin="3,3"
-                           VerticalAlignment="Center"
-                           Visibility="Hidden"><Run Text="Task&lt;object[]&gt; " /><Run FontWeight="Bold"
-                                                                                        Text="{Binding DisplayName, Mode=OneWay}" /><Run Text="(object[])" /></TextBlock>
-                <TextBlock x:Name="notifierContent"
-                           Grid.Column="1"
-                           Margin="3,3"
-                           VerticalAlignment="Center"
-                           Visibility="Hidden"><Run Text="BaseEvent " /><Run FontWeight="Bold"
-                                                                             Text="{Binding DisplayName, Mode=OneWay}" /><Run Text=" { get; }" /></TextBlock>
             </Grid>
-            <HierarchicalDataTemplate.Triggers>
-                <DataTrigger Binding="{Binding IsVariable}"
-                             Value="True">
-                    <Setter TargetName="icon"
-                            Property="Data"
-                            Value="{StaticResource WrenchGeometry}" />
-                    <Setter TargetName="variableContent"
-                            Property="Visibility"
-                            Value="Visible" />
-                    <Setter TargetName="folderContent"
-                            Property="Visibility"
-                            Value="Hidden" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding IsMethod}"
-                             Value="True">
-                    <Setter TargetName="icon"
-                            Property="Data"
-                            Value="{StaticResource RemoteGeometry}" />
-                    <Setter TargetName="methodContent"
-                            Property="Visibility"
-                            Value="Visible" />
-                    <Setter TargetName="folderContent"
-                            Property="Visibility"
-                            Value="Hidden" />
-                </DataTrigger>
-                <DataTrigger Binding="{Binding IsEventNotifier}"
-                             Value="True">
-                    <Setter TargetName="notifierContent"
-                            Property="Visibility"
-                            Value="Visible" />
-                    <Setter TargetName="folderContent"
-                            Property="Visibility"
-                            Value="Hidden" />
-                </DataTrigger>
-            </HierarchicalDataTemplate.Triggers>
         </HierarchicalDataTemplate>
+
     </UserControl.Resources>
     <UserControl.InputBindings>
         <KeyBinding Command="{Binding BrowseStopCommand}"

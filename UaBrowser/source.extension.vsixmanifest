@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <PackageManifest Version="2.0.0" xmlns="http://schemas.microsoft.com/developer/vsx-schema/2011" xmlns:d="http://schemas.microsoft.com/developer/vsx-schema-design/2011">
-  <Metadata>
-    <Identity Id="3ebf0b3e-abaa-4161-a990-435fa37f8c69" Version="1.5.14" Language="en-US" Publisher="Converter Systems LLC" />
-    <DisplayName>Workstation.UaBrowser</DisplayName>
-    <Description xml:space="preserve">Supports Universal Windows Platform (UWP),  WPF, and now Xamarin.Forms. 
+    <Metadata>
+        <Identity Id="3ebf0b3e-abaa-4161-a990-435fa37f8c69" Version="2.2.2" Language="en-US" Publisher="Converter Systems LLC" />
+        <DisplayName>Workstation.UaBrowser</DisplayName>
+        <Description xml:space="preserve">Supports Universal Windows Platform (UWP),  WPF, and now Xamarin.Forms. 
 This extension adds a tool window for browsing the namespace of an OPC UA server.
 For use with our toolkit for building HMI applications using OPC UA and Visual Studio. 
 With this kit you can:
@@ -11,24 +11,29 @@ With this kit you can:
  * Drag and drop the variable, method, and event nodes onto your view model.
  * Add XAML bindings to connect your UI control properties to live data and events.
 </Description>
-    <MoreInfo>https://github.com/convertersystems/opc-ua-tools</MoreInfo>
-    <License>LICENSE.txt</License>
-    <Icon>Resources\robot.png</Icon>
-    <PreviewImage>hmi2.png</PreviewImage>
-    <Tags>opc, hmi</Tags>
-  </Metadata>
-  <Installation>
-    <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[14.0,16.0)" />
-  </Installation>
-  <Dependencies>
-    <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.6,)" />
-    <Dependency Id="Microsoft.VisualStudio.MPF.14.0" DisplayName="Visual Studio MPF 14.0" d:Source="Installed" Version="[14.0,16.0)" />
-  </Dependencies>
-  <Assets>
-    <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
-    <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
-  </Assets>
-  <Prerequisites>
-    <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[14.0,16.0)" DisplayName="Visual Studio core editor" />
-  </Prerequisites>
+        <MoreInfo>https://github.com/convertersystems/opc-ua-tools</MoreInfo>
+        <License>LICENSE.txt</License>
+        <Icon>Resources\robot.png</Icon>
+        <PreviewImage>hmi2.png</PreviewImage>
+        <Tags>opc, hmi</Tags>
+    </Metadata>
+    <Installation>
+        <InstallationTarget Id="Microsoft.VisualStudio.Community" Version="[16.0,17.0)" />
+    </Installation>
+    <Dependencies>
+        <Dependency Id="Microsoft.Framework.NDP" DisplayName="Microsoft .NET Framework" d:Source="Manual" Version="[4.7.2,)" />
+        <Dependency d:Source="Installed" Id="Microsoft.VisualStudio.MPF.16.0" DisplayName="Visual Studio MPF 16.0" Version="[16.0,17.0)" />
+    </Dependencies>
+    <Assets>
+        <Asset Type="Microsoft.VisualStudio.VsPackage" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%;PkgdefProjectOutputGroup|" />
+        <Asset Type="Microsoft.VisualStudio.MefComponent" d:Source="Project" d:ProjectName="%CurrentProject%" Path="|%CurrentProject%|" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Workstation.UaClient.dll" AssemblyName="Workstation.UaClient, Version=2.0.3.0, Culture=neutral, PublicKeyToken=a5b9a5aa6d3e280f" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="BouncyCastle.Crypto.dll" AssemblyName="BouncyCastle.Crypto, Version=1.8.1.0, Culture=neutral, PublicKeyToken=0e99375e54769942" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Microsoft.Extensions.Logging.Abstractions.dll" AssemblyName="Microsoft.Extensions.Logging.Abstractions, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Microsoft.Extensions.Configuration.Abstractions" AssemblyName="Microsoft.Extensions.Configuration.Abstractions, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60" />
+        <Asset Type="Microsoft.VisualStudio.Assembly" d:Source="File" Path="Microsoft.Extensions.Configuration.Binder" AssemblyName="Microsoft.Extensions.Configuration.Binder, Version=1.1.2.0, Culture=neutral, PublicKeyToken=adb9793829ddae60" />
+    </Assets>
+    <Prerequisites>
+        <Prerequisite Id="Microsoft.VisualStudio.Component.CoreEditor" Version="[16.0,17.0)" DisplayName="Visual Studio core editor" />
+    </Prerequisites>
 </PackageManifest>

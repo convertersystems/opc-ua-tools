@@ -79,6 +79,18 @@
                          AcceptsTab="True"
                          Padding="5"
                          Text="{Binding MethodFormatBasic}" />
+                <TextBlock Margin="0,5" Text="For a structure in C#" />
+                <TextBox Height="240"
+                         AcceptsReturn="True"
+                         AcceptsTab="True"
+                         Padding="5"
+                         Text="{Binding StructureFormatCSharp}" />
+                <TextBlock Margin="0,5" Text="For a structure in Basic" />
+                <TextBox Height="240"
+                         AcceptsReturn="True"
+                         AcceptsTab="True"
+                         Padding="5"
+                         Text="{Binding StructureFormatBasic}" />
             </StackPanel>
         </ScrollViewer>
     </DockPanel>
